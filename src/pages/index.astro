@@ -1,0 +1,340 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const latest = posts.slice(0, 3);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+---
+
+<Base title="Sankalp Chaturvedi — Software Developer">
+  <!-- ============ HERO / ATTRACT SCREEN ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__hiscore" aria-label="Stats">
+        <span>1UP <b>SANKALP</b></span>
+        <span>WORLDS <b>03</b></span>
+        <span>SIDE QUESTS <b>02</b></span>
+        <span>HI-SCORE <b>SIH TOP 5</b></span>
+      </div>
+
+      <h1 class="hero__title">SANKALP<br />CHATURVEDI</h1>
+      <p class="hero__sub">SOFTWARE DEVELOPER · BACKEND · DATA · AGENTIC AI</p>
+
+      <button class="hero__start" id="press-start">▶ PRESS START</button>
+    </div>
+
+    <!-- original pixel bot, ambling across the ground -->
+    <svg
+      class="walker"
+      width="48"
+      height="48"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+    >
+      <!-- antenna -->
+      <rect x="7" y="0" width="2" height="2" fill="#ff4d4d" />
+      <!-- head -->
+      <rect x="4" y="2" width="8" height="5" fill="#ffd23f" />
+      <rect x="5" y="3" width="2" height="2" fill="#0b0b1e" />
+      <rect x="9" y="3" width="2" height="2" fill="#0b0b1e" />
+      <!-- body -->
+      <rect x="3" y="7" width="10" height="5" fill="#4dd8ff" />
+      <rect x="6" y="8" width="4" height="3" fill="#0b0b1e" />
+      <rect x="7" y="9" width="2" height="1" fill="#45e06f" />
+      <!-- legs, two frames toggled by CSS -->
+      <g class="legA">
+        <rect x="4" y="12" width="2" height="4" fill="#ffd23f" />
+        <rect x="10" y="12" width="2" height="4" fill="#ffd23f" />
+      </g>
+      <g class="legB">
+        <rect x="5" y="12" width="2" height="4" fill="#ffd23f" />
+        <rect x="9" y="12" width="2" height="4" fill="#ffd23f" />
+      </g>
+    </svg>
+    <div class="ground" aria-hidden="true"></div>
+  </section>
+
+  <!-- ============ WORLD 1 · EXPERIENCE ============ -->
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section class="world wrap" id="world-1">
+    <p class="world__label">WORLD 1</p>
+    <h2 class="world__title">EXPERIENCE</h2>
+
+    <article class="level pixel-border">
+      <div class="level__head">
+        <span class="level__tag">LEVEL 1-3 · NOW PLAYING</span>
+        <h3 class="level__role">Software Developer — Photonmatters</h3>
+        <span class="level__meta">Aug 2025 – Present</span>
+      </div>
+      <ul>
+        <li>
+          Build and maintain reporting systems on Elasticsearch + Kibana:
+          automated reports, dashboards, and data pipelines for large-scale
+          financial datasets.
+        </li>
+        <li>
+          Develop scalable Python/FastAPI backends for report generation,
+          dynamic filtering, aggregations, and Elasticsearch-based retrieval.
+        </li>
+        <li>
+          Built backend components for agentic AI workflows and a Bank
+          Statement Analyzer that turns unstructured financial data into
+          structured, decision-ready output.
+        </li>
+      </ul>
+    </article>
+
+    <article class="level pixel-border">
+      <div class="level__head">
+        <span class="level__tag level__tag--done">LEVEL 1-2 · CLEARED</span>
+        <h3 class="level__role">Fullstack Developer Intern — Dozti</h3>
+        <span class="level__meta">May 2024 – Oct 2024</span>
+      </div>
+      <ul>
+        <li>
+          Built responsive, high-traffic web apps with React, Vite, and
+          Tailwind, improving performance and engagement across devices.
+        </li>
+        <li>
+          Integrated REST APIs with Node/Express and contributed to Docker +
+          Git deployment pipelines.
+        </li>
+      </ul>
+    </article>
+
+    <article class="level pixel-border">
+      <div class="level__head">
+        <span class="level__tag level__tag--done">LEVEL 1-1 · CLEARED</span>
+        <h3 class="level__role">ERP Developer Intern — Knighthood</h3>
+        <span class="level__meta">Feb 2024 – Mar 2024</span>
+      </div>
+      <ul>
+        <li>
+          Customized ERPNext/Frappe with modules for attendance, payroll, and
+          role-based access control.
+        </li>
+        <li>
+          Automated business processes and integrated third-party systems via
+          REST APIs.
+        </li>
+      </ul>
+    </article>
+  </section>
+
+  <!-- ============ WORLD 2 · PROJECTS ============ -->
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section class="world wrap" id="world-2">
+    <p class="world__label">WORLD 2</p>
+    <h2 class="world__title">SIDE QUESTS</h2>
+
+    <div class="cabinets">
+      <article class="cabinet pixel-border">
+        <h3 class="cabinet__title">AI TRAVEL ITINERARY GENERATOR</h3>
+        <p>
+          Travel planner that generates personalized day-wise itineraries —
+          budget estimates, stays, local activities — plus a chatbot that
+          answers trip-specific questions in context.
+        </p>
+        <div class="cabinet__items">
+          <span>Next.js</span><span>Gemini API</span><span>Prompt design</span>
+        </div>
+        <div class="cabinet__links">
+          <!-- TODO: real links -->
+          <a class="btn btn--cyan" href="#">DEMO</a>
+          <a class="btn btn--ghost" href="#">CODE</a>
+        </div>
+      </article>
+
+      <article class="cabinet pixel-border">
+        <h3 class="cabinet__title">BYTE NEWZ — AI NEWS AGGREGATOR</h3>
+        <p>
+          Aggregates and categorizes news from multiple sources in real time,
+          then serves quirky 100-word AI summaries for faster reading.
+        </p>
+        <div class="cabinet__items">
+          <span>JavaScript</span><span>Gemini API</span><span>REST APIs</span>
+        </div>
+        <div class="cabinet__links">
+          <!-- TODO: real links -->
+          <a class="btn btn--cyan" href="#">DEMO</a>
+          <a class="btn btn--ghost" href="#">CODE</a>
+        </div>
+      </article>
+
+      <article class="cabinet cabinet--empty pixel-border">
+        <p>INSERT<br />CARTRIDGE<br /><span class="t-muted">next build loading…</span></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ WORLD 3 · SKILLS ============ -->
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section class="world wrap" id="world-3">
+    <p class="world__label">WORLD 3</p>
+    <h2 class="world__title">POWER-UPS</h2>
+
+    <div class="powerups">
+      <div class="powerup pixel-border">
+        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="3" y="0" width="2" height="1" fill="#8f8fb8" />
+          <rect x="2" y="1" width="4" height="1" fill="#8f8fb8" />
+          <rect x="2" y="2" width="4" height="5" fill="#45e06f" />
+          <rect x="3" y="4" width="1" height="1" fill="#0b0b1e" />
+        </svg>
+        <h3 class="powerup__name">LANGUAGES</h3>
+        <p>Python · JavaScript · SQL</p>
+      </div>
+
+      <div class="powerup pixel-border">
+        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="0" y="1" width="8" height="6" fill="#14142f" />
+          <rect x="0" y="1" width="8" height="1" fill="#4dd8ff" />
+          <rect x="1" y="3" width="3" height="1" fill="#ffd23f" />
+          <rect x="1" y="5" width="5" height="1" fill="#45e06f" />
+        </svg>
+        <h3 class="powerup__name">WEB &amp; BACKEND</h3>
+        <p>React · Next.js · Node.js · FastAPI · REST APIs</p>
+      </div>
+
+      <div class="powerup pixel-border">
+        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="1" y="1" width="6" height="6" fill="#ff4d4d" />
+          <rect x="2" y="2" width="4" height="4" fill="#14142f" />
+          <rect x="3" y="3" width="2" height="2" fill="#ffd23f" />
+          <rect x="0" y="3" width="1" height="2" fill="#ff4d4d" />
+          <rect x="7" y="3" width="1" height="2" fill="#ff4d4d" />
+        </svg>
+        <h3 class="powerup__name">AI / ML</h3>
+        <p>
+          LLM integrations · RAG · vector DBs · agentic AI · prompt
+          engineering · Gemini API · MS AI Foundry
+        </p>
+      </div>
+
+      <div class="powerup pixel-border">
+        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="1" y="0" width="6" height="2" fill="#4dd8ff" />
+          <rect x="1" y="3" width="6" height="2" fill="#4dd8ff" />
+          <rect x="1" y="6" width="6" height="2" fill="#4dd8ff" />
+        </svg>
+        <h3 class="powerup__name">DATA &amp; TOOLS</h3>
+        <p>
+          Elasticsearch · Kibana · MySQL · MongoDB · Docker · Git · n8n
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORLD 4 · ACHIEVEMENTS ============ -->
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section class="world wrap" id="world-4">
+    <p class="world__label">WORLD 4</p>
+    <h2 class="world__title">ACHIEVEMENTS</h2>
+
+    <div class="badges">
+      <div class="badge pixel-border">
+        <svg class="badge__icon" width="36" height="36" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="1" y="1" width="6" height="3" fill="#ffd23f" />
+          <rect x="0" y="1" width="1" height="2" fill="#ffd23f" />
+          <rect x="7" y="1" width="1" height="2" fill="#ffd23f" />
+          <rect x="3" y="4" width="2" height="2" fill="#ffd23f" />
+          <rect x="2" y="6" width="4" height="1" fill="#b8860b" />
+        </svg>
+        <div>
+          <p class="badge__unlock">ACHIEVEMENT UNLOCKED · 2023</p>
+          <h3 class="badge__name">SMART INDIA HACKATHON — TOP 5 GRAND FINALIST</h3>
+          <p>National-level finals, one of the top five teams.</p>
+        </div>
+      </div>
+
+      <div class="badge pixel-border">
+        <svg class="badge__icon" width="36" height="36" viewBox="0 0 8 8" aria-hidden="true">
+          <circle cx="4" cy="3" r="2.4" fill="#4dd8ff" />
+          <rect x="2" y="5" width="1" height="3" fill="#ff4d4d" />
+          <rect x="5" y="5" width="1" height="3" fill="#ff4d4d" />
+        </svg>
+        <div>
+          <p class="badge__unlock">ACHIEVEMENT UNLOCKED · 2023</p>
+          <h3 class="badge__name">METABYTE HACKATHON — GLOBAL RANK 2</h3>
+          <p>Second place worldwide.</p>
+        </div>
+      </div>
+
+      <div class="badge pixel-border">
+        <svg class="badge__icon" width="36" height="36" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="3" y="0" width="2" height="2" fill="#ffd23f" />
+          <rect x="0" y="3" width="8" height="2" fill="#ffd23f" />
+          <rect x="2" y="5" width="4" height="1" fill="#ffd23f" />
+          <rect x="1" y="6" width="2" height="2" fill="#ffd23f" />
+          <rect x="5" y="6" width="2" height="2" fill="#ffd23f" />
+        </svg>
+        <div>
+          <p class="badge__unlock">ACHIEVEMENT UNLOCKED · 2023</p>
+          <h3 class="badge__name">FLIPKART GRID 5.0 — TOP 10%</h3>
+          <p>Among ~400,000 participants nationwide.</p>
+        </div>
+      </div>
+
+      <div class="badge pixel-border">
+        <svg class="badge__icon" width="36" height="36" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="1" y="0" width="6" height="8" fill="#f2f0e4" />
+          <rect x="2" y="2" width="4" height="1" fill="#0b0b1e" />
+          <rect x="2" y="4" width="4" height="1" fill="#0b0b1e" />
+          <rect x="2" y="6" width="3" height="1" fill="#0b0b1e" />
+        </svg>
+        <div>
+          <p class="badge__unlock">ACHIEVEMENT UNLOCKED · 2021</p>
+          <h3 class="badge__name">JEE MAINS — TOP 7%</h3>
+          <p>Out of roughly one million candidates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORLD 5 · DEV LOG ============ -->
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section class="world wrap" id="world-5">
+    <p class="world__label">WORLD 5</p>
+    <h2 class="world__title">DEV LOG</h2>
+
+    {
+      latest.map((post) => (
+        <a class="log-entry pixel-border" href={`/blog/${post.id}`}>
+          <span class="log-entry__date">{fmt(post.data.date)}</span>
+          <h3 class="log-entry__title">{post.data.title}</h3>
+          <p>{post.data.description}</p>
+        </a>
+      ))
+    }
+
+    <a class="btn" href="/blog">VIEW ALL ENTRIES →</a>
+  </section>
+
+  <!-- ============ CONTINUE? · CONTACT ============ -->
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section class="world wrap" id="continue" style="text-align:center; padding-bottom: 40px;">
+    <p class="world__label" style="color: var(--gold);">CONTINUE?</p>
+    <h2 class="world__title">INSERT COIN TO CONNECT</h2>
+    <p style="max-width: 560px; margin: 0 auto 30px;">
+      Open to interesting problems in backend, data, and agentic AI. The
+      fastest respawn point is email.
+    </p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a class="btn" href="mailto:snklp021@gmail.com">EMAIL</a>
+      <!-- TODO: real profile URLs -->
+      <a class="btn btn--ghost" href="#">GITHUB</a>
+      <a class="btn btn--ghost" href="#">LINKEDIN</a>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('press-start')?.addEventListener('click', () => {
+      document.getElementById('world-1')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</Base>

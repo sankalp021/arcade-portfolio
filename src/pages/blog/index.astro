@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+---
+
+<Base
+  title="Dev Log — Sankalp Chaturvedi"
+  description="Notes and write-ups on backend engineering, data pipelines, and agentic AI."
+>
+  <section class="world wrap">
+    <p class="world__label">ARCHIVE</p>
+    <h1 class="world__title">DEV LOG — ALL ENTRIES</h1>
+
+    {
+      posts.map((post) => (
+        <a class="log-entry pixel-border" href={`/blog/${post.id}`}>
+          <span class="log-entry__date">{fmt(post.data.date)}</span>
+          <h2 class="log-entry__title">{post.data.title}</h2>
+          <p>{post.data.description}</p>
+          {post.data.tags.length > 0 && (
+            <div class="log-entry__tags">
+              {post.data.tags.map((tag) => (
+                <span>{tag}</span>
+              ))}
+            </div>
+          )}
+        </a>
+      ))
+    }
+
+    {posts.length === 0 && <p class="t-muted">No entries yet. The log awaits.</p>}
+  </section>
+</Base>

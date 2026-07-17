@@ -1,0 +1,80 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Sankalp Chaturvedi — software developer building backends, data pipelines, and agentic AI systems.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hud">
+      <div class="wrap hud__inner">
+        <a href="/#top" class="hud__logo" aria-label="Home">SC</a>
+        <nav class="hud__nav" aria-label="Main">
+          <a href="/#world-1">EXP</a>
+          <a href="/#world-2">QUESTS</a>
+          <a href="/#world-3">SKILLS</a>
+          <a href="/blog">DEV&nbsp;LOG</a>
+          <a href="/#continue">CONTACT</a>
+        </nav>
+        <button class="hud__coins" id="coin-btn" title="Insert coin">
+          <i class="coin" aria-hidden="true"></i>
+          <span>×<span id="coin-count">00</span></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <p class="display">GAME OVER? NEVER. — CONTINUE (9)</p>
+      <p>
+        © 2026 Sankalp Chaturvedi · built with Astro · original pixel art, no
+        plumbers were licensed
+      </p>
+    </footer>
+
+    <script>
+      // Coin counter easter egg — persists between visits.
+      const btn = document.getElementById('coin-btn');
+      const out = document.getElementById('coin-count');
+      const KEY = 'sc-coins';
+
+      const render = (n: number) => {
+        if (out) out.textContent = String(n).padStart(2, '0');
+      };
+
+      let coins = Number(localStorage.getItem(KEY) ?? 0);
+      render(coins);
+
+      btn?.addEventListener('click', () => {
+        coins += 1;
+        localStorage.setItem(KEY, String(coins));
+        render(coins);
+      });
+    </script>
+  </body>
+</html>
