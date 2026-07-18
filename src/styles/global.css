@@ -684,6 +684,20 @@ summary,
   max-width: 760px;
 }
 
+/* Reading panel for blog posts: a proper text box, and it sits ABOVE the
+   fixed CRT overlays (scanlines z-999, tracking z-998) so the effects play
+   around the box, never over the words. Reading is a no-flicker zone. */
+.prose--panel {
+  position: relative;
+  z-index: 1000;
+  background: var(--bg-2);
+  padding: 30px 34px 36px;
+}
+
+.prose--panel h1 {
+  margin-top: 0;
+}
+
 .prose h1 {
   font-family: var(--font-display);
   font-size: clamp(18px, 4vw, 28px);
@@ -872,6 +886,10 @@ summary,
 
   .log-entry {
     padding: 16px 16px;
+  }
+
+  .prose--panel {
+    padding: 20px 18px 26px;
   }
 
   .cabinet__links {
