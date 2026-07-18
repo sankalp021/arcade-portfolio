@@ -4,12 +4,28 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  /** 'article' for blog posts — switches Open Graph type + enables article meta */
+  type?: 'website' | 'article';
+  publishedDate?: Date;
+  tags?: string[];
+  /** JSON-LD structured data blocks rendered into <head> */
+  schema?: Record<string, unknown>[];
 }
 
 const {
   title,
-  description = 'Sankalp Chaturvedi — software developer building backends, data pipelines, and agentic AI systems.',
+  description = 'Sankalp Chaturvedi — software developer building Python/FastAPI backends, Elasticsearch data pipelines, and agentic AI systems.',
+  type = 'website',
+  publishedDate,
+  tags = [],
+  schema = [],
 } = Astro.props;
+
+const site = Astro.site ?? new URL('https://snklp.dev');
+// one canonical form: no trailing slash (except the root)
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonical = new URL(path, site).href;
+const ogImage = new URL('/og.png', site).href;
 ---
 
 <!doctype html>
@@ -19,7 +35,44 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Sankalp Chaturvedi" />
+    <meta name="theme-color" content="#0b0b1e" />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Sankalp Chaturvedi — Dev Log"
+      href="/rss.xml"
+    />
+
+    <!-- Open Graph / social share -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Sankalp Chaturvedi" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Retro arcade start screen: Sankalp Chaturvedi — software developer, press start."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {
+      type === 'article' && publishedDate && (
+        <meta property="article:published_time" content={publishedDate.toISOString()} />
+      )
+    }
+    {type === 'article' && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+    {schema.map((block) => <script is:inline type="application/ld+json" set:html={JSON.stringify(block)} />)}
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -70,10 +123,40 @@ const {
       let coins = Number(localStorage.getItem(KEY) ?? 0);
       render(coins);
 
-      btn?.addEventListener('click', () => {
-        coins += 1;
+      const addCoins = (n: number) => {
+        coins += n;
         localStorage.setItem(KEY, String(coins));
         render(coins);
+      };
+
+      btn?.addEventListener('click', () => addCoins(1));
+
+      // ↑ ↑ ↓ ↓ ← → ← → B A — you know what this is.
+      const KONAMI = [
+        'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+        'b', 'a',
+      ];
+      let step = 0;
+
+      const toast = (msg: string) => {
+        document.querySelector('.toast')?.remove();
+        const el = document.createElement('div');
+        el.className = 'toast display';
+        el.setAttribute('role', 'status');
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+      };
+
+      window.addEventListener('keydown', (e) => {
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        step = key === KONAMI[step] ? step + 1 : key === KONAMI[0] ? 1 : 0;
+        if (step === KONAMI.length) {
+          step = 0;
+          addCoins(30);
+          toast('+30 LIVES · CHEAT ACCEPTED. RESPECT.');
+        }
       });
     </script>
   </body>

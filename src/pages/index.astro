@@ -9,20 +9,65 @@ const latest = posts.slice(0, 3);
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+
+const siteUrl = (Astro.site ?? new URL('https://snklp.dev')).href;
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Sankalp Chaturvedi',
+  url: siteUrl,
+  jobTitle: 'Software Developer',
+  worksFor: { '@type': 'Organization', name: 'Photonmatters' },
+  email: 'mailto:snklp021@gmail.com',
+  sameAs: [
+    'https://github.com/sankalp021',
+    'https://www.linkedin.com/in/sankalp-chaturvedi-567315233/',
+  ],
+  knowsAbout: [
+    'Python',
+    'FastAPI',
+    'Elasticsearch',
+    'Kibana',
+    'Agentic AI',
+    'RAG',
+    'LLM integration',
+    'Vector databases',
+    'React',
+    'Next.js',
+    'Node.js',
+    'Docker',
+  ],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Sankalp Chaturvedi — Arcade Portfolio',
+  url: siteUrl,
+  description:
+    'Portfolio and dev log of Sankalp Chaturvedi, a software developer working on backends, data pipelines, and agentic AI.',
+  author: { '@type': 'Person', name: 'Sankalp Chaturvedi' },
+};
 ---
 
-<Base title="Sankalp Chaturvedi — Software Developer">
+<Base
+  title="Sankalp Chaturvedi — Software Developer | Backend, Data & Agentic AI"
+  description="Portfolio and dev log of Sankalp Chaturvedi — software developer building Python/FastAPI backends, Elasticsearch data pipelines, and agentic AI systems at Photonmatters."
+  schema={[personSchema, websiteSchema]}
+>
   <!-- ============ HERO / ATTRACT SCREEN ============ -->
   <section class="hero">
     <div class="wrap">
       <div class="hero__hiscore" aria-label="Stats">
         <span>1UP <b>SANKALP</b></span>
-        <span>WORLDS <b>03</b></span>
+        <span>WORLDS <b>05</b></span>
         <span>SIDE QUESTS <b>02</b></span>
         <span>HI-SCORE <b>SIH TOP 5</b></span>
       </div>
 
-      <h1 class="hero__title">SANKALP<br />CHATURVEDI</h1>
+      <p class="hero__player">PLAYER ONE</p>
+      <h1 class="hero__title">SANKALP CHATURVEDI</h1>
       <p class="hero__sub">SOFTWARE DEVELOPER · BACKEND · DATA · AGENTIC AI</p>
 
       <button class="hero__start" id="press-start">▶ PRESS START</button>
@@ -144,9 +189,18 @@ const fmt = (d: Date) =>
           <span>Next.js</span><span>Gemini API</span><span>Prompt design</span>
         </div>
         <div class="cabinet__links">
-          <!-- TODO: real links -->
-          <a class="btn btn--cyan" href="#">DEMO</a>
-          <a class="btn btn--ghost" href="#">CODE</a>
+          <a
+            class="btn btn--cyan"
+            href="https://backpacker-compass.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer">DEMO</a
+          >
+          <a
+            class="btn btn--ghost"
+            href="https://github.com/sankalp021/travel-app"
+            target="_blank"
+            rel="noopener noreferrer">CODE</a
+          >
         </div>
       </article>
 
@@ -160,9 +214,18 @@ const fmt = (d: Date) =>
           <span>JavaScript</span><span>Gemini API</span><span>REST APIs</span>
         </div>
         <div class="cabinet__links">
-          <!-- TODO: real links -->
-          <a class="btn btn--cyan" href="#">DEMO</a>
-          <a class="btn btn--ghost" href="#">CODE</a>
+          <a
+            class="btn btn--cyan"
+            href="https://newsapp-ivory-six.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer">DEMO</a
+          >
+          <a
+            class="btn btn--ghost"
+            href="https://github.com/sankalp021/newsapp"
+            target="_blank"
+            rel="noopener noreferrer">CODE</a
+          >
         </div>
       </article>
 
@@ -301,6 +364,10 @@ const fmt = (d: Date) =>
   <section class="world wrap" id="world-5">
     <p class="world__label">WORLD 5</p>
     <h2 class="world__title">DEV LOG</h2>
+    <p class="t-muted" style="margin: -14px 0 26px;">
+      Field notes from work, side quests, and whatever rabbit hole ate this
+      week. Curiosity-driven — the résumé does not get a veto.
+    </p>
 
     {
       latest.map((post) => (
@@ -326,9 +393,18 @@ const fmt = (d: Date) =>
     </p>
     <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
       <a class="btn" href="mailto:snklp021@gmail.com">EMAIL</a>
-      <!-- TODO: real profile URLs -->
-      <a class="btn btn--ghost" href="#">GITHUB</a>
-      <a class="btn btn--ghost" href="#">LINKEDIN</a>
+      <a
+        class="btn btn--ghost"
+        href="https://github.com/sankalp021"
+        target="_blank"
+        rel="noopener noreferrer">GITHUB</a
+      >
+      <a
+        class="btn btn--ghost"
+        href="https://www.linkedin.com/in/sankalp-chaturvedi-567315233/"
+        target="_blank"
+        rel="noopener noreferrer">LINKEDIN</a
+      >
     </div>
   </section>
 

@@ -8,15 +8,31 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+
+const siteUrl = (Astro.site ?? new URL('https://snklp.dev')).href;
+
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Dev Log — Sankalp Chaturvedi',
+  url: new URL('/blog', siteUrl).href,
+  description:
+    'Research notes and write-ups by Sankalp Chaturvedi — backend engineering, data pipelines, agentic AI, and whatever else is currently under investigation.',
+  author: { '@type': 'Person', name: 'Sankalp Chaturvedi', url: siteUrl },
+};
 ---
 
 <Base
   title="Dev Log — Sankalp Chaturvedi"
-  description="Notes and write-ups on backend engineering, data pipelines, and agentic AI."
+  description="Research notes and write-ups by Sankalp Chaturvedi — backend engineering, data pipelines, agentic AI, and whatever else is currently under investigation."
+  schema={[blogSchema]}
 >
   <section class="world wrap">
     <p class="world__label">ARCHIVE</p>
     <h1 class="world__title">DEV LOG — ALL ENTRIES</h1>
+    <p class="t-muted" style="margin: -14px 0 26px;">
+      Anything researched here gets written up here. Scope: unbounded.
+    </p>
 
     {
       posts.map((post) => (

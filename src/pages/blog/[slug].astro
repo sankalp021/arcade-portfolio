@@ -15,9 +15,35 @@ const { Content } = await render(post);
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const siteUrl = (Astro.site ?? new URL('https://snklp.dev')).href;
+const postUrl = new URL(`/blog/${post.id}`, siteUrl).href;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  url: postUrl,
+  mainEntityOfPage: postUrl,
+  keywords: post.data.tags.join(', '),
+  author: {
+    '@type': 'Person',
+    name: 'Sankalp Chaturvedi',
+    url: siteUrl,
+  },
+};
 ---
 
-<Base title={`${post.data.title} — Dev Log`} description={post.data.description}>
+<Base
+  title={`${post.data.title} — Sankalp Chaturvedi`}
+  description={post.data.description}
+  type="article"
+  publishedDate={post.data.date}
+  tags={post.data.tags}
+  schema={[articleSchema]}
+>
   <article class="world wrap prose">
     <p class="world__label">
       <a href="/blog" style="color: inherit;">← BACK TO LOG</a>

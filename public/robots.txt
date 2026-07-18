@@ -1,0 +1,5 @@
+# snklp.dev — humans and robots equally welcome. Insert coin.
+User-agent: *
+Allow: /
+
+Sitemap: https://snklp.dev/sitemap.xml

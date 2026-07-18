@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="404 — Game Over | Sankalp Chaturvedi"
+  description="This page is in another castle."
+>
+  <section
+    class="world wrap"
+    style="text-align:center; min-height: 55svh; display:flex; flex-direction:column; justify-content:center;"
+  >
+    <p class="world__label">ERROR 404</p>
+    <h1 class="world__title" style="color: var(--red);">GAME OVER</h1>
+    <p style="max-width: 520px; margin: 0 auto 10px;">
+      The page you're looking for is in another castle. Or was never shipped.
+      Or got refactored into oblivion — it happens to the best of us.
+    </p>
+    <p class="t-muted" style="margin: 0 0 34px;">CONTINUE? 9… 8… 7…</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a class="btn" href="/">INSERT COIN — HOME</a>
+      <a class="btn btn--ghost" href="/blog">READ THE DEV LOG</a>
+    </div>
+  </section>
+</Base>

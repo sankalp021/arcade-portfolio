@@ -37,19 +37,26 @@ npm run dev      # → http://localhost:4321
 Posts live in `src/content/blog/`. One markdown file = one post. The filename
 is the URL slug. See `_template.md` for the frontmatter fields.
 
-**The pipeline:** draft a post with Claude in chat → give the green flag →
-Claude commits the `.md` file to this repo via the GitHub connector → Vercel
-rebuilds → live in ~a minute.
+**The pipeline:** write the post in markdown → commit to `main` → Vercel
+rebuilds → live in ~a minute. No CMS, no admin panel.
 
-## TODO before going live
+## SEO / discoverability
 
-Search the codebase for `TODO`:
+All of this is dependency-free (hand-rolled endpoints, no integrations):
 
-- [ ] `astro.config.mjs` — set `site` to your deployed URL
-- [ ] `src/pages/index.astro` — real GitHub / LinkedIn profile URLs (contact
-      section) and DEMO / CODE links on both project cabinets
-- [ ] Optional: your phone number is deliberately **not** on the site
-      (public internet + phone numbers = spam). Add it only if you want it.
+- `src/pages/sitemap.xml.ts` — sitemap, auto-includes every published post
+- `src/pages/rss.xml.ts` — RSS feed for the dev log
+- `public/robots.txt` — crawlers welcome, points at the sitemap
+- `public/llms.txt` — site summary for AI search engines
+- `public/og.png` — social-share card (regenerate with a pixel-font script if
+  the tagline ever changes)
+- `src/layouts/Base.astro` — canonical URLs, Open Graph / Twitter meta, and
+  JSON-LD structured data (Person + WebSite on home, BlogPosting on posts)
+
+## Notes
+
+- Your phone number is deliberately **not** on the site (public internet +
+  phone numbers = spam). Add it only if you want it.
 
 ## Design notes
 
