@@ -1,0 +1,34 @@
+# Pings IndexNow (Bing / DuckDuckGo / ChatGPT-search index) whenever main
+# changes, so new blog posts get crawled in minutes instead of days.
+# The key is public by design — search engines verify it by fetching
+# https://snklp.dev/<key>.txt, which lives in public/.
+name: IndexNow ping
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/blog/**'
+      - 'src/pages/**'
+      - 'src/layouts/**'
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Vercel to deploy this commit
+        run: sleep 120
+
+      - name: Submit sitemap URLs to IndexNow
+        run: |
+          KEY=c9713ea65db977c47911c6a371fcedd2
+          HOST=snklp.dev
+          URLS=$(curl -sf "https://$HOST/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -e 's|<loc>||' -e 's|</loc>||')
+          if [ -z "$URLS" ]; then echo "no URLs found in sitemap"; exit 1; fi
+          BODY=$(printf '%s\n' "$URLS" | jq -R . | jq -s \
+            --arg host "$HOST" --arg key "$KEY" \
+            '{host: $host, key: $key, keyLocation: ("https://" + $host + "/" + $key + ".txt"), urlList: .}')
+          echo "$BODY"
+          curl -sf -X POST 'https://api.indexnow.org/indexnow' \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "$BODY" -w 'IndexNow responded: HTTP %{http_code}\n'
