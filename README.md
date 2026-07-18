@@ -52,6 +52,9 @@ All of this is dependency-free (hand-rolled endpoints, no integrations):
   the tagline ever changes)
 - `src/layouts/Base.astro` — canonical URLs, Open Graph / Twitter meta, and
   JSON-LD structured data (Person + WebSite on home, BlogPosting on posts)
+- `.github/workflows/indexnow.yml` — pings IndexNow (Bing / DuckDuckGo /
+  ChatGPT search) after each content push to `main`; the paired key file
+  lives in `public/`
 
 ## Notes
 
