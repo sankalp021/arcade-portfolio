@@ -680,10 +680,18 @@ summary,
 }
 
 /* ---------- article (blog post) prose ---------- */
-/* VT323 at 21-22px reads fine for posts. If you ever want a calmer reading
-   experience, swap --font-body for a normal face here only. */
+/* Arcade chrome, professional content: headings stay Press Start 2P, but
+   body copy switches to Inter — long reads deserve a real reading face. */
 .prose {
-  max-width: 760px;
+  max-width: 920px;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 18px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased; /* pixel-crunch off for the text face */
+}
+
+.prose strong {
+  font-weight: 600;
 }
 
 /* Reading panel for blog posts: near-black box, white pixel border,
@@ -694,7 +702,7 @@ summary,
   z-index: 3;
   background: var(--bg);
   margin-inline: auto;
-  padding: 30px 34px 36px;
+  padding: 38px 48px 44px;
 }
 
 .prose--panel h1 {
@@ -726,7 +734,8 @@ summary,
 .prose code {
   background: var(--bg-3);
   padding: 2px 7px;
-  font-family: var(--font-body);
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  font-size: 15px;
   color: var(--green);
 }
 
@@ -892,7 +901,11 @@ summary,
   }
 
   .prose--panel {
-    padding: 20px 18px 26px;
+    padding: 22px 18px 28px;
+  }
+
+  .prose {
+    font-size: 17px;
   }
 
   .cabinet__links {
