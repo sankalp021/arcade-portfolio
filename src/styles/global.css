@@ -77,6 +77,43 @@ body::after {
   z-index: 999;
 }
 
+/* CRT tracking band — a faint bright line drifting down, like a worn tube */
+body::before {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -20%;
+  height: 110px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  z-index: 998;
+  animation: tracking 9s linear infinite;
+}
+
+@keyframes tracking {
+  from { transform: translateY(0); }
+  to { transform: translateY(140vh); }
+}
+
+/* Pixel cursor: cream arrow everywhere, gold arrow on things you can press */
+html {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 12 12"><g fill="%23f2f0e4"><rect x="1" y="1" width="1" height="1"/><rect x="1" y="2" width="2" height="1"/><rect x="1" y="3" width="3" height="1"/><rect x="1" y="4" width="4" height="1"/><rect x="1" y="5" width="5" height="1"/><rect x="1" y="6" width="6" height="1"/><rect x="1" y="7" width="7" height="1"/><rect x="1" y="8" width="4" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="4" y="9" width="2" height="1"/><rect x="4" y="10" width="2" height="1"/></g></svg>') 2 2, auto;
+}
+
+a,
+button,
+.btn,
+summary,
+[role='button'] {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 12 12"><g fill="%23ffd23f"><rect x="1" y="1" width="1" height="1"/><rect x="1" y="2" width="2" height="1"/><rect x="1" y="3" width="3" height="1"/><rect x="1" y="4" width="4" height="1"/><rect x="1" y="5" width="5" height="1"/><rect x="1" y="6" width="6" height="1"/><rect x="1" y="7" width="7" height="1"/><rect x="1" y="8" width="4" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="4" y="9" width="2" height="1"/><rect x="4" y="10" width="2" height="1"/></g></svg>') 2 2, pointer;
+}
+
 /* ---------- utilities ---------- */
 
 /* Chunky 8-bit border: drawn with box-shadows so corners stay "cut" */
@@ -268,6 +305,27 @@ body::after {
   color: var(--gold);
   /* one hard shadow keeps the marquee feel without shouting */
   text-shadow: 3px 3px 0 var(--red);
+  /* rare RGB-split glitch, like a cabinet with a loose cable */
+  animation: glitch 7s steps(1) infinite;
+}
+
+@keyframes glitch {
+  0%, 91%, 100% {
+    transform: none;
+    text-shadow: 3px 3px 0 var(--red);
+  }
+  92% {
+    transform: translate(-3px, 1px);
+    text-shadow: -4px 0 0 var(--cyan), 3px 3px 0 var(--red);
+  }
+  93.5% {
+    transform: translate(2px, -1px) skewX(-4deg);
+    text-shadow: 4px 0 0 var(--green), -3px 3px 0 var(--red);
+  }
+  95% {
+    transform: none;
+    text-shadow: 3px 3px 0 var(--red);
+  }
 }
 
 .hero__sub {
@@ -293,6 +351,29 @@ body::after {
   animation-play-state: paused;
 }
 
+.hero__hint {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--muted);
+  margin-top: 22px;
+}
+
+/* BOT RUN mini-game canvas — replaces the walker while playing */
+.run-canvas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 72px;
+  width: 100%;
+  height: 200px;
+  display: none;
+  image-rendering: pixelated;
+}
+
+.run-canvas.is-on {
+  display: block;
+}
+
 @keyframes blink {
   50% { opacity: 0; }
 }
@@ -314,12 +395,21 @@ body::after {
   box-shadow: inset 0 10px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* The walker: an original little pixel bot, ambling across the ground */
-.walker {
+/* The walker: an original little pixel bot, ambling across the ground.
+   It's a button — catch it to start the BOT RUN mini-game. */
+.walker-btn {
   position: absolute;
   bottom: 72px;
   left: 0;
+  padding: 6px;
+  background: none;
+  border: none;
   animation: walk 16s linear infinite;
+}
+
+.walker-btn:hover .walker,
+.walker-btn:focus-visible .walker {
+  filter: drop-shadow(0 0 6px var(--gold));
 }
 
 @keyframes walk {
@@ -415,7 +505,7 @@ body::after {
 /* ---------- projects: arcade cabinets ---------- */
 .cabinets {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
   gap: 30px;
 }
 
@@ -473,7 +563,7 @@ body::after {
 /* ---------- skills: power-ups ---------- */
 .powerups {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
   gap: 30px;
 }
 
@@ -497,7 +587,7 @@ body::after {
 /* ---------- achievements ---------- */
 .badges {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
   gap: 30px;
 }
 
@@ -689,9 +779,11 @@ body::after {
     scroll-behavior: auto;
   }
 
-  .walker,
+  body::before,
+  .walker-btn,
   .walker .legA,
   .walker .legB,
+  .hero__title,
   .hero__start,
   .hud__coins:hover .coin,
   .toast {
@@ -705,11 +797,81 @@ body::after {
     font-size: 20px;
   }
 
+  /* nav: roomier tap targets, tighter chrome */
+  .hud__inner {
+    gap: 12px;
+    padding-block: 8px;
+  }
+
+  .hud__logo {
+    font-size: 11px;
+    padding: 7px 8px;
+  }
+
   .hud__nav {
-    gap: 4px 12px;
+    gap: 2px 10px;
+  }
+
+  .hud__nav a {
+    font-size: 9px;
+    padding: 9px 4px; /* bigger touch area, same visual size */
+  }
+
+  /* hero: less dead air, fewer stats competing for one small row */
+  .hero {
+    padding-bottom: 104px;
   }
 
   .hero__hiscore {
-    gap: 14px;
+    gap: 10px 16px;
+    margin-bottom: 30px;
+  }
+
+  .hero__hiscore span:nth-child(2),
+  .hero__hiscore span:nth-child(3) {
+    display: none; /* keep 1UP + HI-SCORE; worlds/quests return on desktop */
+  }
+
+  .hero__sub {
+    margin-top: 20px;
+  }
+
+  .hero__start {
+    margin-top: 42px;
+  }
+
+  /* sections: tighter padding so content leads */
+  .world {
+    padding: 40px 0 16px;
+  }
+
+  .dots {
+    gap: 16px;
+    padding: 32px 0 6px;
+  }
+
+  .level {
+    padding: 18px 16px;
+  }
+
+  .cabinet {
+    padding: 18px 16px;
+  }
+
+  .badge {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .log-entry {
+    padding: 16px 16px;
+  }
+
+  .cabinet__links {
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 12px 13px;
   }
 }
