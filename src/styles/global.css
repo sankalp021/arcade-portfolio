@@ -358,6 +358,13 @@ summary,
   margin-top: 22px;
 }
 
+/* While BOT RUN is on, the hero gets out of the game's way */
+.hero--playing .hero__start,
+.hero--playing .hero__hint,
+.hero--playing .walker {
+  visibility: hidden;
+}
+
 /* BOT RUN mini-game canvas — replaces the walker while playing */
 .run-canvas {
   position: absolute;
@@ -395,21 +402,12 @@ summary,
   box-shadow: inset 0 10px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* The walker: an original little pixel bot, ambling across the ground.
-   It's a button — catch it to start the BOT RUN mini-game. */
-.walker-btn {
+/* The walker: an original little pixel bot, ambling across the ground */
+.walker {
   position: absolute;
   bottom: 72px;
   left: 0;
-  padding: 6px;
-  background: none;
-  border: none;
   animation: walk 16s linear infinite;
-}
-
-.walker-btn:hover .walker,
-.walker-btn:focus-visible .walker {
-  filter: drop-shadow(0 0 6px var(--gold));
 }
 
 @keyframes walk {
@@ -780,7 +778,7 @@ summary,
   }
 
   body::before,
-  .walker-btn,
+  .walker,
   .walker .legA,
   .walker .legB,
   .hero__title,
