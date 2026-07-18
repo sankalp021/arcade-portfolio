@@ -74,7 +74,9 @@ body::after {
     rgba(0, 0, 0, 0.14) 0 2px,
     transparent 2px 4px
   );
-  z-index: 999;
+  /* low z: covers normal content, but anything that must stay crisp
+     (reading panel z-3, sticky header z-50, toast z-1000) sits above */
+  z-index: 2;
 }
 
 /* CRT tracking band — a faint bright line drifting down, like a worn tube */
@@ -92,7 +94,7 @@ body::before {
     rgba(255, 255, 255, 0.03),
     transparent
   );
-  z-index: 998;
+  z-index: 1;
   animation: tracking 9s linear infinite;
 }
 
@@ -684,13 +686,14 @@ summary,
   max-width: 760px;
 }
 
-/* Reading panel for blog posts: a proper text box, and it sits ABOVE the
-   fixed CRT overlays (scanlines z-999, tracking z-998) so the effects play
-   around the box, never over the words. Reading is a no-flicker zone. */
+/* Reading panel for blog posts: near-black box, white pixel border,
+   centered. Sits above the CRT overlays (z 1-2) so no scanlines over the
+   words, but below the sticky header (z 50) so it scrolls underneath it. */
 .prose--panel {
   position: relative;
-  z-index: 1000;
-  background: var(--bg-2);
+  z-index: 3;
+  background: var(--bg);
+  margin-inline: auto;
   padding: 30px 34px 36px;
 }
 
