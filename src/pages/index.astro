@@ -71,38 +71,31 @@ const websiteSchema = {
       <p class="hero__sub">SOFTWARE DEVELOPER · BACKEND · DATA · AGENTIC AI</p>
 
       <button class="hero__start" id="press-start">▶ PRESS START</button>
-      <p class="hero__hint">SIDE OBJECTIVE: CATCH THE WANDERING BOT</p>
+      <p class="hero__hint">BOT RUN — SPACE OR TAP TO JUMP · MIND THE BUGS</p>
     </div>
 
-    <!-- original pixel bot, ambling across the ground — catch it to play -->
-    <button
-      class="walker-btn"
-      id="walker-btn"
-      aria-label="Catch the bot to play BOT RUN, a tiny runner mini-game"
-      title="BOT RUN — click to play"
-    >
-      <svg class="walker" width="48" height="48" viewBox="0 0 16 16" aria-hidden="true">
-        <!-- antenna -->
-        <rect x="7" y="0" width="2" height="2" fill="#ff4d4d" />
-        <!-- head -->
-        <rect x="4" y="2" width="8" height="5" fill="#ffd23f" />
-        <rect x="5" y="3" width="2" height="2" fill="#0b0b1e" />
-        <rect x="9" y="3" width="2" height="2" fill="#0b0b1e" />
-        <!-- body -->
-        <rect x="3" y="7" width="10" height="5" fill="#4dd8ff" />
-        <rect x="6" y="8" width="4" height="3" fill="#0b0b1e" />
-        <rect x="7" y="9" width="2" height="1" fill="#45e06f" />
-        <!-- legs, two frames toggled by CSS -->
-        <g class="legA">
-          <rect x="4" y="12" width="2" height="4" fill="#ffd23f" />
-          <rect x="10" y="12" width="2" height="4" fill="#ffd23f" />
-        </g>
-        <g class="legB">
-          <rect x="5" y="12" width="2" height="4" fill="#ffd23f" />
-          <rect x="9" y="12" width="2" height="4" fill="#ffd23f" />
-        </g>
-      </svg>
-    </button>
+    <!-- original pixel bot, ambling across the ground -->
+    <svg class="walker" width="48" height="48" viewBox="0 0 16 16" aria-hidden="true">
+      <!-- antenna -->
+      <rect x="7" y="0" width="2" height="2" fill="#ff4d4d" />
+      <!-- head -->
+      <rect x="4" y="2" width="8" height="5" fill="#ffd23f" />
+      <rect x="5" y="3" width="2" height="2" fill="#0b0b1e" />
+      <rect x="9" y="3" width="2" height="2" fill="#0b0b1e" />
+      <!-- body -->
+      <rect x="3" y="7" width="10" height="5" fill="#4dd8ff" />
+      <rect x="6" y="8" width="4" height="3" fill="#0b0b1e" />
+      <rect x="7" y="9" width="2" height="1" fill="#45e06f" />
+      <!-- legs, two frames toggled by CSS -->
+      <g class="legA">
+        <rect x="4" y="12" width="2" height="4" fill="#ffd23f" />
+        <rect x="10" y="12" width="2" height="4" fill="#ffd23f" />
+      </g>
+      <g class="legB">
+        <rect x="5" y="12" width="2" height="4" fill="#ffd23f" />
+        <rect x="9" y="12" width="2" height="4" fill="#ffd23f" />
+      </g>
+    </svg>
     <canvas
       class="run-canvas"
       id="run-canvas"
@@ -417,24 +410,21 @@ const websiteSchema = {
   </section>
 
   <script>
-    document.getElementById('press-start')?.addEventListener('click', () => {
-      document.getElementById('world-1')?.scrollIntoView({ behavior: 'smooth' });
-    });
-
     // ================= BOT RUN =================
-    // Catch the walker to play. Jump the bugs (the developer's natural
-    // enemy), grab coins — they bank into the HUD counter.
-    const walkerBtn = document.getElementById('walker-btn');
+    // PRESS START (or Space, with the hero on screen) starts the run.
+    // Jump the bugs — the developer's natural enemy — and grab coins;
+    // they bank into the HUD counter.
+    const startBtn = document.getElementById('press-start');
     const canvas = document.getElementById('run-canvas') as HTMLCanvasElement | null;
     const hero = document.querySelector<HTMLElement>('.hero');
 
-    if (walkerBtn && canvas && hero) {
+    if (startBtn && canvas && hero) {
       const ctx = canvas.getContext('2d')!;
       const C = {
         bg: '#0b0b1e', gold: '#ffd23f', red: '#ff4d4d', green: '#45e06f',
         cyan: '#4dd8ff', ink: '#f2f0e4', muted: '#8f8fb8', bronze: '#b8860b',
       };
-      const U = 4; // one game "pixel"
+      const U = 3; // one game "pixel" — matches the 48px walker sprite
       const H = 200;
 
       type Px = [number, number, number, number, string];
@@ -502,7 +492,7 @@ const websiteSchema = {
 
         for (const it of items) {
           if (it.kind === 'bug') sprite(BUG, it.x, H - BUG_H);
-          else sprite(COIN, it.x, H - 118);
+          else sprite(COIN, it.x, H - 108);
         }
 
         const legs = botY > 0 ? LEGS_A : frame % 12 < 6 ? LEGS_A : LEGS_B;
@@ -573,10 +563,10 @@ const websiteSchema = {
               localStorage.setItem('sc-run-hi', String(hi));
             }
           } else {
-            const coinBottom = 118 - COIN_W; // height band of the coin
+            const coinBottom = 108 - COIN_W; // height band of the coin
             const grabbed =
               it.x < botR && it.x + COIN_W > botL &&
-              botTop > coinBottom && botBottom < 118;
+              botTop > coinBottom && botBottom < 108;
             if (grabbed) {
               it.x = -999;
               bankCoin();
@@ -605,7 +595,7 @@ const websiteSchema = {
         items = [];
         resize();
         canvas.classList.add('is-on');
-        walkerBtn.style.display = 'none';
+        hero.classList.add('hero--playing');
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(loop);
       };
@@ -615,10 +605,10 @@ const websiteSchema = {
         over = false;
         cancelAnimationFrame(raf);
         canvas.classList.remove('is-on');
-        walkerBtn.style.display = '';
+        hero.classList.remove('hero--playing');
       };
 
-      walkerBtn.addEventListener('click', start);
+      startBtn.addEventListener('click', start);
 
       canvas.addEventListener('pointerdown', () => {
         if (!playing) return;
@@ -626,8 +616,19 @@ const websiteSchema = {
         else jump();
       });
 
+      const heroOnScreen = () =>
+        hero.getBoundingClientRect().bottom > window.innerHeight * 0.5;
+
       window.addEventListener('keydown', (e) => {
-        if (!playing) return;
+        if (!playing) {
+          // Space is a start button too — but only while the hero is on screen,
+          // so it never hijacks scrolling further down the page.
+          if (e.key === ' ' && heroOnScreen()) {
+            e.preventDefault();
+            start();
+          }
+          return;
+        }
         if (e.key === ' ' || e.key === 'ArrowUp') {
           e.preventDefault();
           if (over) start();
