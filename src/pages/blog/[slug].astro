@@ -44,16 +44,18 @@ const articleSchema = {
   tags={post.data.tags}
   schema={[articleSchema]}
 >
-  <article class="world wrap prose">
+  <section class="world wrap">
     <p class="world__label">
       <a href="/blog" style="color: inherit;">← BACK TO LOG</a>
     </p>
-    <h1>{post.data.title}</h1>
-    <p class="t-muted">
-      {fmt(post.data.date)}
-      {post.data.tags.length > 0 && <> · {post.data.tags.join(' · ')}</>}
-    </p>
-    <hr />
-    <Content />
-  </article>
+    <article class="prose prose--panel pixel-border">
+      <h1>{post.data.title}</h1>
+      <p class="t-muted">
+        {fmt(post.data.date)}
+        {post.data.tags.length > 0 && <> · {post.data.tags.join(' · ')}</>}
+      </p>
+      <hr />
+      <Content />
+    </article>
+  </section>
 </Base>
