@@ -213,6 +213,13 @@ summary,
   text-decoration: none;
 }
 
+/* keep the dark text on hover (the global gold link-hover would blend it
+   into the gold tile); flip the tile instead */
+.hud__logo:hover {
+  color: var(--bg);
+  background: var(--ink);
+}
+
 .hud__nav {
   display: flex;
   flex-wrap: wrap;
@@ -348,7 +355,9 @@ summary,
 
 .hero__start:hover {
   color: var(--gold);
-  animation-play-state: paused;
+  /* remove (not pause) the blink: pausing could freeze it mid-"off" frame,
+     leaving the button invisible for as long as the cursor sits on it */
+  animation: none;
 }
 
 .hero__hint {
