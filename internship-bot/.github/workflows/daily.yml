@@ -1,0 +1,49 @@
+name: Daily internship digest
+
+on:
+  schedule:
+    # 02:30 UTC = 08:00 IST. GitHub cron is UTC and may run a few minutes late.
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the digest instead of sending to Telegram"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # needed to commit the updated dedupe state back
+
+concurrency:
+  group: daily-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Run digest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: python src/main.py
+
+      - name: Commit updated dedupe state
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "internship-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/seen.json
+          git diff --staged --quiet || git commit -m "chore: update seen state [skip ci]"
+          git push

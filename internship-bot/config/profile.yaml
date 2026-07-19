@@ -1,0 +1,64 @@
+# Ipshita's search profile. Edit this to retune what the bot looks for.
+# No personal contact info lives here — the Telegram chat id is a secret, not config.
+
+person:
+  name: Ipshita
+  headline: >-
+    MBA in Sustainability Management @ IIFM Bhopal (2025-2027);
+    B.Com (Hons) Finance @ BHU. ESG/GHG data analyst experience, Power BI.
+
+target:
+  timeframe: "Winter internship (approx Nov 2026 - Jan 2027) and final MBA placement"
+  domains: [Sustainability, ESG, Climate, Finance]
+  roles:
+    - ESG Analyst
+    - Sustainability Analyst / Consultant
+    - ESG Data Analyst
+    - GHG / Carbon Accounting Analyst
+    - Sustainability / BRSR / GRI Reporting Analyst
+    - Finance Analyst / FP&A
+    - Sustainable Finance / ESG Investing
+    - ESG Equity / Investment Research
+  locations: [India, Remote, Hybrid (India)]
+  level: [Internship, MBA Summer/Winter Internship, Entry-level, Graduate/Fresher]
+
+# Her real strengths — used to explain "why this fits" and to score relevance.
+skills:
+  - ESG data analysis
+  - GHG inventory / carbon accounting
+  - Sustainability reporting (BRSR/GRI/ESG disclosures)
+  - Power BI
+  - Excel / Google Sheets
+  - Financial analysis
+
+# Keywords used for board searches and fit scoring. Keep them broad-ish.
+keywords:
+  - ESG
+  - sustainability
+  - climate
+  - carbon
+  - GHG
+  - BRSR
+  - decarbonization
+  - finance
+  - investment
+  - analyst
+  - internship
+
+# Free-text context handed to the model. This is where the OFF-RESUME internship goes.
+notes:
+  - "Extra sustainability internship (the 'SI' one) not listed on the resume — TODO: add the company name and a one-line description here so the bot can weigh it."
+  - "B.Com Finance background makes her a credible fit for finance and sustainable-finance roles, not only pure sustainability."
+  - "Prefers India-based or remote roles."
+
+# --- Job-board sources (real APIs, no fragile scraping) ---
+sources:
+  # Remotive: free public JSON API. One request per search term.
+  remotive_searches:
+    - ESG
+    - sustainability
+    - finance analyst
+    - data analyst
+  # Optional: public Greenhouse job boards of employers you care about.
+  # Add the board "token" from a company's careers URL, e.g. boards.greenhouse.io/watershed -> "watershed".
+  greenhouse_companies: []
