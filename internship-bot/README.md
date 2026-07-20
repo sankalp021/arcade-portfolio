@@ -69,9 +69,14 @@ repository secret**. Add exactly these three (names must match):
 | `TELEGRAM_BOT_TOKEN` | the token from @BotFather              |
 | `TELEGRAM_CHAT_ID`   | the chat id from step 2                |
 
-**Optional (recommended for India coverage):** add `ADZUNA_APP_ID` and
-`ADZUNA_APP_KEY` — free keys from [developer.adzuna.com](https://developer.adzuna.com).
-Without them the Adzuna source is simply skipped; Reddit and LinkedIn need no keys.
+**Optional but recommended — free keys that unlock the best sources:**
+
+| Secret | Unlocks | Get it free at |
+| --- | --- | --- |
+| `ADZUNA_APP_ID` + `ADZUNA_APP_KEY` | real **India** job coverage | [developer.adzuna.com](https://developer.adzuna.com) |
+| `REDDIT_CLIENT_ID` + `REDDIT_CLIENT_SECRET` | the **Reddit** section (blocked from CI without it) | [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) → create a **script** app |
+
+Any left blank → that source is simply skipped. LinkedIn needs no keys.
 
 > ⚠️ **Never paste these into the code or commit them.** Git history is
 > forever and a leaked key gets abused fast. Secrets only ever live in the

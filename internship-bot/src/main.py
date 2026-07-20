@@ -43,7 +43,7 @@ def main() -> int:
 
     all_jobs = gather_jobs(settings, profile)
     try:
-        reddit_posts = _dedupe_batch(reddit_source.fetch(profile))
+        reddit_posts = _dedupe_batch(reddit_source.fetch(profile, settings))
     except Exception as e:  # noqa: BLE001 - reddit is a nice-to-have, never fatal
         print(f"[reddit] fetch error: {e}")
         reddit_posts = []

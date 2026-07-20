@@ -24,6 +24,15 @@ DOMAIN_TERMS = (
 )
 
 
+def _text(v, default: str = "") -> str:
+    """Coerce a possibly-list/None API field into a clean string."""
+    if isinstance(v, (list, tuple)):
+        return ", ".join(str(x) for x in v if x)
+    if v is None:
+        return default
+    return str(v).strip()
+
+
 def domain_relevant(*texts) -> bool:
     # Robust to non-string values (some APIs return lists, e.g. Jobicy jobIndustry).
     parts = []
@@ -158,11 +167,11 @@ def _jobicy(tags: list, cap: int = 10) -> list:
             if not domain_relevant(title, j.get("jobIndustry", "")):
                 continue
             out.append({
-                "title": title.strip(),
-                "org": (j.get("companyName") or "").strip(),
-                "location": (j.get("jobGeo") or "Remote").strip(),
-                "type": (j.get("jobType") or "").strip(),
-                "link": (j.get("url") or "").strip(),
+                "title": _text(title),
+                "org": _text(j.get("companyName")),
+                "location": _text(j.get("jobGeo")) or "Remote",
+                "type": _text(j.get("jobType")),
+                "link": _text(j.get("url")),
                 "deadline": "", "why_fit": "", "source": "jobicy",
             })
             kept += 1

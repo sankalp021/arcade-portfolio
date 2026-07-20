@@ -23,6 +23,10 @@ class Settings:
         # Adzuna is optional — gives real India coverage. Free keys: developer.adzuna.com
         self.adzuna_app_id = os.environ.get("ADZUNA_APP_ID", "").strip()
         self.adzuna_app_key = os.environ.get("ADZUNA_APP_KEY", "").strip()
+        # Reddit OAuth (optional but recommended — Reddit blocks anon requests from
+        # CI IPs). Free "script" app at reddit.com/prefs/apps.
+        self.reddit_client_id = os.environ.get("REDDIT_CLIENT_ID", "").strip()
+        self.reddit_client_secret = os.environ.get("REDDIT_CLIENT_SECRET", "").strip()
         self.max_items = int(os.environ.get("MAX_ITEMS", "10") or "10")
         self.dry_run = _flag("DRY_RUN", False)
         self.send_when_empty = _flag("SEND_WHEN_EMPTY", False)
