@@ -83,9 +83,7 @@ sources:
 
   # Greenhouse: token from a careers URL like boards.greenhouse.io/<token>
   greenhouse_companies:
-    - watershed        # examples to verify/replace with her targets
-    - persefoni
-    - sylvera
+    - watershed        # verified valid; add HER target companies' tokens here
   # Lever: token from jobs.lever.co/<token>
   lever_companies: []
   # Ashby: org from jobs.ashbyhq.com/<org>
