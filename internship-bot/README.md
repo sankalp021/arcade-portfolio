@@ -20,12 +20,21 @@ GitHub Actions (daily cron, 08:00 IST)
         ▼
   python src/main.py
    1. gemini_source.py → Gemini w/ Google Search grounding → live openings + real links
-   2. boards.py        → Remotive API (+ optional Greenhouse company boards)
-   3. dedupe.py        → drop anything in state/seen.json (already sent)
-   4. formatter.py     → rank by fit to her profile, build a clean HTML message
-   5. telegram_client  → send to her Telegram chat
-   6. commit state/seen.json back to the repo (so tomorrow won't repeat today)
+   2. boards.py        → Adzuna (India) + Remotive + The Muse + Jobicy + Greenhouse
+                         (strict domain filter: sustainability/ESG/finance only)
+   3. reddit_source.py → recent on-topic posts from relevant subreddits (public JSON)
+   4. networking.py    → curated LinkedIn people/jobs deep-links + note templates
+   5. dedupe.py        → drop anything in state/seen.json (already sent)
+   6. formatter.py     → rank by fit, build a clean HTML message (Jobs / Reddit / Networking)
+   7. telegram_client  → send to her Telegram chat
+   8. commit state/seen.json back to the repo (so tomorrow won't repeat today)
 ```
+
+**What she gets each day:** a ranked list of **real openings** (sustainability/ESG +
+finance, India/remote), a short **Reddit** section of recent on-topic posts, and a
+**LinkedIn networking** block — deep-links that open real people/recruiter and job
+searches she can act on, plus copy-paste connection-note templates. The LinkedIn part
+never invents people or scrapes profiles; it hands her live, pre-filtered searches.
 
 **Why grounding matters:** a plain LLM call invents fake companies and dead
 links. Grounding makes Gemini search Google in real time and answer from
@@ -59,6 +68,10 @@ repository secret**. Add exactly these three (names must match):
 | `GEMINI_API_KEY`     | your Gemini key                        |
 | `TELEGRAM_BOT_TOKEN` | the token from @BotFather              |
 | `TELEGRAM_CHAT_ID`   | the chat id from step 2                |
+
+**Optional (recommended for India coverage):** add `ADZUNA_APP_ID` and
+`ADZUNA_APP_KEY` — free keys from [developer.adzuna.com](https://developer.adzuna.com).
+Without them the Adzuna source is simply skipped; Reddit and LinkedIn need no keys.
 
 > ⚠️ **Never paste these into the code or commit them.** Git history is
 > forever and a leaked key gets abused fast. Secrets only ever live in the
@@ -128,7 +141,9 @@ Drop `DRY_RUN=true` to actually send to Telegram.
 | --------------------------- | ------------------------------------------- |
 | `src/main.py`               | orchestrator                                |
 | `src/gemini_source.py`      | Gemini + Google Search grounding            |
-| `src/boards.py`             | Remotive / Greenhouse job-board APIs        |
+| `src/boards.py`             | Adzuna / Remotive / The Muse / Jobicy / Greenhouse |
+| `src/reddit_source.py`      | recent on-topic posts (public Reddit JSON)  |
+| `src/networking.py`         | LinkedIn people/jobs deep-links + templates |
 | `src/dedupe.py`             | "already sent" state (`state/seen.json`)    |
 | `src/formatter.py`          | ranking + Telegram HTML message building    |
 | `src/telegram_client.py`    | Telegram Bot API sender                     |

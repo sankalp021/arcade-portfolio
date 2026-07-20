@@ -59,6 +59,63 @@ sources:
     - sustainability
     - finance analyst
     - data analyst
+  # Adzuna: free API with genuine India coverage. Needs ADZUNA_APP_ID / ADZUNA_APP_KEY
+  # secrets (get them free at developer.adzuna.com). Skipped automatically if unset.
+  adzuna_country: in            # two-letter country code; "in" = India
+  adzuna_searches:
+    - ESG analyst
+    - sustainability
+    - finance analyst
+    - ESG intern
+  # The Muse: free public API (no key). Categories are from The Muse's fixed list.
+  the_muse_categories:
+    - Data and Analytics
+    - Finance
+    - Business Operations
+  the_muse_location: India
+  # Jobicy: free remote-jobs API (no key).
+  jobicy_tags:
+    - finance
+    - data-science
   # Optional: public Greenhouse job boards of employers you care about.
-  # Add the board "token" from a company's careers URL, e.g. boards.greenhouse.io/watershed -> "watershed".
+  # Add the board "token" from a company's careers URL (boards.greenhouse.io/<token>).
   greenhouse_companies: []
+
+# --- Reddit (public JSON API, no key) ---
+reddit:
+  subreddits:
+    - climatejobs
+    - GreenJobs
+    - sustainability
+    - FinancialCareers
+    - Internships
+    - forhire
+  # A post must mention at least one of these to count as relevant.
+  keywords:
+    - ESG
+    - sustainab
+    - climate
+    - carbon
+    - finance
+    - analyst
+    - intern
+    - hiring
+  max_age_days: 12
+  max_items: 5
+
+# --- Networking: curated LinkedIn search deep-links (no scraping, no fake people) ---
+networking:
+  linkedin_location: India
+  # Each becomes a LinkedIn people-search link she can open and send requests from.
+  linkedin_people_searches:
+    - ESG analyst recruiter India
+    - sustainability talent acquisition India
+    - ESG consulting hiring India
+    - sustainable finance recruiter India
+    - IIFM Bhopal sustainability
+  # Keywords for LinkedIn *jobs* deep-links (internship + entry filters applied).
+  linkedin_job_searches:
+    - ESG analyst
+    - sustainability analyst
+    - finance analyst
+  max_links: 6

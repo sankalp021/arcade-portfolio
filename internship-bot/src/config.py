@@ -20,6 +20,9 @@ class Settings:
         self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash").strip()
         self.telegram_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
         self.telegram_chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+        # Adzuna is optional — gives real India coverage. Free keys: developer.adzuna.com
+        self.adzuna_app_id = os.environ.get("ADZUNA_APP_ID", "").strip()
+        self.adzuna_app_key = os.environ.get("ADZUNA_APP_KEY", "").strip()
         self.max_items = int(os.environ.get("MAX_ITEMS", "10") or "10")
         self.dry_run = _flag("DRY_RUN", False)
         self.send_when_empty = _flag("SEND_WHEN_EMPTY", False)

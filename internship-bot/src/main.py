@@ -11,24 +11,28 @@ import boards  # noqa: E402
 import dedupe  # noqa: E402
 import formatter  # noqa: E402
 import gemini_source  # noqa: E402
+import networking  # noqa: E402
+import reddit_source  # noqa: E402
 import telegram_client  # noqa: E402
 from config import Settings, load_profile  # noqa: E402
 
 
-def gather(settings: Settings, profile: dict) -> list:
+def _dedupe_batch(items: list) -> list:
+    unique, keys = [], set()
+    for it in items:
+        k = dedupe.job_key(it)
+        if k in keys:
+            continue
+        keys.add(k)
+        unique.append(it)
+    return unique
+
+
+def gather_jobs(settings: Settings, profile: dict) -> list:
     jobs = []
     jobs += gemini_source.fetch(settings, profile, n=max(settings.max_items + 4, 12))
-    jobs += boards.fetch(profile)
-
-    # de-duplicate within this run (grounding + boards can overlap)
-    unique, seen_keys = [], set()
-    for j in jobs:
-        k = dedupe.job_key(j)
-        if k in seen_keys:
-            continue
-        seen_keys.add(k)
-        unique.append(j)
-    return unique
+    jobs += boards.fetch(profile, settings)
+    return _dedupe_batch(jobs)
 
 
 def main() -> int:
@@ -37,28 +41,30 @@ def main() -> int:
     name = profile.get("person", {}).get("name", "there")
     keywords = profile.get("keywords", [])
 
-    all_jobs = gather(settings, profile)
-    print(f"[main] {len(all_jobs)} unique openings gathered")
+    all_jobs = gather_jobs(settings, profile)
+    reddit_posts = _dedupe_batch(reddit_source.fetch(profile))
+    net = networking.build(profile)
+    print(f"[main] {len(all_jobs)} jobs, {len(reddit_posts)} reddit posts gathered")
 
     seen = dedupe.load_seen()
-    fresh = dedupe.filter_new(all_jobs, seen)
-    print(f"[main] {len(fresh)} are new since last run")
+    fresh_jobs = dedupe.filter_new(all_jobs, seen)
+    fresh_reddit = dedupe.filter_new(reddit_posts, seen)
+    fresh_jobs.sort(key=lambda j: formatter.score(j, keywords), reverse=True)
+    picks = fresh_jobs[: settings.max_items]
+    reddit_picks = fresh_reddit[: profile.get("reddit", {}).get("max_items", 5)]
+    print(f"[main] {len(picks)} new jobs, {len(reddit_picks)} new reddit posts to send")
 
-    fresh.sort(key=lambda j: formatter.score(j, keywords), reverse=True)
-    picks = fresh[: settings.max_items]
-
-    if not picks:
+    # Networking is static, so it alone shouldn't trigger a daily send.
+    if not picks and not reddit_picks:
         print("[main] nothing new to send today")
         if settings.send_when_empty and not settings.dry_run:
             telegram_client.send(
-                settings.telegram_token,
-                settings.telegram_chat_id,
-                f"👋 {name}, no new matching openings surfaced today. "
-                "I'll keep looking tomorrow.",
+                settings.telegram_token, settings.telegram_chat_id,
+                f"👋 {name}, no new matching openings surfaced today. Looking again tomorrow.",
             )
         return 0
 
-    messages = formatter.build_messages(picks, name)
+    messages = formatter.build_messages(picks, name, reddit_posts=reddit_picks, networking=net)
 
     if settings.dry_run:
         print("\n===== DRY RUN (not sending) =====")
@@ -73,8 +79,8 @@ def main() -> int:
 
     ok = telegram_client.send_all(settings.telegram_token, settings.telegram_chat_id, messages)
     if ok:
-        dedupe.commit_seen(picks, seen)
-        print(f"[main] sent {len(picks)} openings and updated seen state")
+        dedupe.commit_seen(picks + reddit_picks, seen)
+        print(f"[main] sent {len(picks)} jobs + {len(reddit_picks)} reddit posts; updated seen state")
         return 0
     print("[main] send failed — NOT recording as seen so they retry next run")
     return 1
