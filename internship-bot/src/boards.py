@@ -69,7 +69,8 @@ def _remotive(searches: list, cap_per_search: int = 8) -> list:
                 "location": (j.get("candidate_required_location") or "Remote").strip(),
                 "type": (j.get("job_type") or "").replace("_", "-").title(),
                 "link": (j.get("url") or "").strip(),
-                "deadline": "", "why_fit": "", "source": "remotive",
+                "deadline": "", "why_fit": "", "posted": j.get("publication_date", ""),
+                "source": "remotive",
             })
             kept += 1
             if kept >= cap_per_search:
@@ -108,7 +109,8 @@ def _adzuna(country: str, searches: list, app_id: str, app_key: str) -> list:
                 "location": ((j.get("location") or {}).get("display_name") or "").strip(),
                 "type": (j.get("contract_time") or "").replace("_", "-").title(),
                 "link": (j.get("redirect_url") or "").strip(),
-                "deadline": "", "why_fit": "", "source": "adzuna",
+                "deadline": "", "why_fit": "", "posted": j.get("created", ""),
+                "source": "adzuna",
             })
     print(f"[adzuna] {len(out)} on-topic openings")
     return out
@@ -142,7 +144,8 @@ def _the_muse(categories: list, location: str) -> list:
             "location": locs.strip(),
             "type": (j.get("level") or "").strip(),
             "link": ((j.get("refs") or {}).get("landing_page") or "").strip(),
-            "deadline": "", "why_fit": "", "source": "themuse",
+            "deadline": "", "why_fit": "", "posted": j.get("publication_date", ""),
+            "source": "themuse",
         })
     print(f"[themuse] {len(out)} on-topic openings")
     return out
@@ -172,7 +175,8 @@ def _jobicy(tags: list, cap: int = 10) -> list:
                 "location": _text(j.get("jobGeo")) or "Remote",
                 "type": _text(j.get("jobType")),
                 "link": _text(j.get("url")),
-                "deadline": "", "why_fit": "", "source": "jobicy",
+                "deadline": "", "why_fit": "", "posted": _text(j.get("pubDate")),
+                "source": "jobicy",
             })
             kept += 1
             if kept >= cap:
@@ -202,7 +206,8 @@ def _greenhouse(tokens: list) -> list:
                 "title": title.strip(), "org": token,
                 "location": ((j.get("location") or {}).get("name") or "").strip(),
                 "type": "", "link": (j.get("absolute_url") or "").strip(),
-                "deadline": "", "why_fit": "", "source": f"greenhouse:{token}",
+                "deadline": "", "why_fit": "", "posted": j.get("updated_at", ""),
+                "source": f"greenhouse:{token}",
             })
     if tokens:
         print(f"[greenhouse] {len(out)} on-topic openings")
@@ -230,7 +235,8 @@ def _lever(companies: list) -> list:
                 "location": _text(cats.get("location")),
                 "type": _text(cats.get("commitment")),
                 "link": _text(j.get("hostedUrl")),
-                "deadline": "", "why_fit": "", "source": f"lever:{c}",
+                "deadline": "", "why_fit": "", "posted": j.get("createdAt", ""),
+                "source": f"lever:{c}",
             })
     if companies:
         print(f"[lever] {len(out)} on-topic openings")
@@ -257,7 +263,8 @@ def _ashby(orgs: list) -> list:
                 "location": _text(j.get("location")),
                 "type": _text(j.get("employmentType")),
                 "link": _text(j.get("jobUrl") or j.get("applyUrl")),
-                "deadline": "", "why_fit": "", "source": f"ashby:{org}",
+                "deadline": "", "why_fit": "", "posted": _text(j.get("publishedAt")),
+                "source": f"ashby:{org}",
             })
     if orgs:
         print(f"[ashby] {len(out)} on-topic openings")
@@ -302,7 +309,9 @@ def _unstop(types: list, searches: list) -> list:
                 out.append({
                     "title": _text(title), "org": _text(org),
                     "location": "India", "type": _text(t),
-                    "link": _text(url), "deadline": "", "why_fit": "", "source": "unstop",
+                    "link": _text(url), "deadline": "", "why_fit": "",
+                    "posted": _text(j.get("start_date") or j.get("created") or j.get("updated_at")),
+                    "source": "unstop",
                 })
     print(f"[unstop] {len(out)} on-topic openings")
     return out
@@ -343,7 +352,8 @@ def _workday(boards: list, searches: list) -> list:
                     "title": _text(title), "org": tenant,
                     "location": _text(j.get("locationsText")),
                     "type": "", "link": f"https://{host}/en-US/{site}{ext}",
-                    "deadline": "", "why_fit": "", "source": f"workday:{tenant}",
+                    "deadline": "", "why_fit": "", "posted": _text(j.get("postedOn")),
+                    "source": f"workday:{tenant}",
                 })
     if boards:
         print(f"[workday] {len(out)} on-topic openings")

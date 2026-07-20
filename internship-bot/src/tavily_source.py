@@ -27,13 +27,16 @@ def _org_from_url(url: str) -> str:
         return ""
 
 
-def fetch(settings, profile: dict) -> list:
+def fetch(settings, profile: dict, max_queries: int = None) -> list:
     key = settings.tavily_api_key
     if not key:
         print("[tavily] no TAVILY_API_KEY — skipping")
         return []
     cfg = profile.get("tavily", {}) or {}
     queries = cfg.get("queries", [])
+    if max_queries is None:
+        max_queries = cfg.get("max_queries_per_run", 3)
+    queries = queries[:max_queries]  # cap credit use (each query = 1 credit)
     include = cfg.get("include_domains", []) or []
     max_results = cfg.get("max_results", 8)
 
@@ -65,7 +68,7 @@ def fetch(settings, profile: dict) -> list:
             out.append({
                 "title": title, "org": _org_from_url(url),
                 "location": "", "type": "", "link": url, "deadline": "",
-                "why_fit": snippet, "source": "tavily",
+                "why_fit": snippet, "posted": "", "source": "tavily",
             })
     print(f"[tavily] {len(out)} on-topic results")
     return out

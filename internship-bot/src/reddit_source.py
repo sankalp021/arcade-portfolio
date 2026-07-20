@@ -83,8 +83,8 @@ def fetch(profile: dict, settings) -> list:
                 "org": f"r/{d.get('subreddit', sub)}",
                 "location": "", "type": "reddit",
                 "link": "https://www.reddit.com" + d.get("permalink", ""),
-                "deadline": "", "why_fit": "", "source": "reddit",
-                "_created": created,
+                "deadline": "", "why_fit": "", "posted": created,
+                "source": "reddit", "_created": created,
             })
         time.sleep(1)  # be polite
 

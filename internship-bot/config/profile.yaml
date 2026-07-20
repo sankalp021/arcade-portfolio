@@ -101,7 +101,11 @@ sources:
 # The "grounding-style" source: real current listings from across the web
 # (Internshala / LinkedIn / Naukri / company pages) with real links.
 tavily:
-  max_results: 8
+  # Credit-thrifty: Tavily only runs when the free sources come up short, and is
+  # capped per run (each query = 1 credit; free tier = 1000/month).
+  only_if_fewer_than: 8        # skip Tavily entirely if free sources already gave >= this many new
+  max_queries_per_run: 3       # hard cap on searches per run
+  max_results: 6
   include_domains: []          # empty = whole web; or restrict to job sites
   queries:
     - ESG analyst internship India 2026
