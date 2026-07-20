@@ -85,7 +85,7 @@ Optional knobs (set as extra repo secrets/variables or in `.env`):
 | Var              | Default            | Meaning                                     |
 | ---------------- | ------------------ | ------------------------------------------- |
 | `MAX_ITEMS`      | `10`               | max openings per day                        |
-| `GEMINI_MODEL`   | `gemini-2.5-flash` | which Gemini model to use                   |
+| `GEMINI_MODEL`   | `gemini-3.5-flash` | which Gemini model to use                   |
 | `DRY_RUN`        | `false`            | print instead of sending                    |
 | `SEND_WHEN_EMPTY`| `false`            | send a note on days with nothing new        |
 

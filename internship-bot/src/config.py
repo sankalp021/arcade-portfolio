@@ -17,7 +17,7 @@ def _flag(name: str, default: bool = False) -> bool:
 class Settings:
     def __init__(self) -> None:
         self.gemini_api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-        self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
+        self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash").strip()
         self.telegram_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
         self.telegram_chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
         self.max_items = int(os.environ.get("MAX_ITEMS", "10") or "10")
