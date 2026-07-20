@@ -1,8 +1,8 @@
 # SANKALP ARCADE
 
 Retro-arcade portfolio + dev log for Sankalp Chaturvedi. Built with
-[Astro](https://astro.build) — zero extra dependencies, blog posts are plain
-markdown files.
+[Astro](https://astro.build) — the only extra dependency is Vercel
+analytics; blog posts are plain markdown files.
 
 ## Run it locally
 
