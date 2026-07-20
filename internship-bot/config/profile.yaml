@@ -119,8 +119,10 @@ tavily:
     - BRSR ESG reporting analyst fresher India
     - sustainable finance internship India
   # A focused Reddit search via Tavily (Reddit blocks CI IPs). ~1 credit.
+  # Targets genuine hiring posts; seeker/advice threads are filtered out in code,
+  # so the Reddit section only appears when there's a real opening (often hidden).
   reddit_queries:
-    - (ESG OR sustainability OR finance) internship OR hiring India
+    - hiring OR "now hiring" ESG OR sustainability OR "sustainable finance" internship analyst India
 
 # --- Reddit (public JSON API, no key) ---
 reddit:

@@ -55,6 +55,27 @@ def _looks_like_index(title: str, url: str) -> bool:
     return any(m in (url or "").lower() for m in _INDEX_URL)
 
 
+# Reddit post filtering: keep genuine hiring/opportunity posts, drop the noise
+# (people seeking jobs, advice threads, bare subreddit links).
+_SEEKER_HINTS = (
+    "looking for", "need a", "need an", "advice", "guidance", "how do i", "how to",
+    "help me", "resume", "any leads", "suggestion", "should i", "is it worth",
+    "chances", "review my", "am i", "roast my",
+)
+_HIRING_HINTS = (
+    "hiring", "we're looking", "we are looking", "join our", "join us", "opening",
+    "vacancy", "vacancies", "recruit", "apply now", "now hiring", "we are hiring",
+    "seeking a", "seeking an", "position open",
+)
+
+
+def _is_opportunity(title: str) -> bool:
+    t = (title or "").lower()
+    if any(s in t for s in _SEEKER_HINTS):
+        return False
+    return any(h in t for h in _HIRING_HINTS)
+
+
 def _subreddit(url: str) -> str:
     try:
         parts = urllib.parse.urlparse(url).path.strip("/").split("/")
@@ -97,7 +118,11 @@ def fetch_reddit(settings, profile: dict) -> list:
             url = (res.get("url") or "").strip()
             if not title or not url.startswith("http") or url in seen:
                 continue
+            if "/comments/" not in url:            # must be a real post, not a bare subreddit
+                continue
             if not boards.domain_relevant(title, res.get("content", "")):
+                continue
+            if not _is_opportunity(title):         # a hiring post, not a seeker/advice thread
                 continue
             seen.add(url)
             out.append({
