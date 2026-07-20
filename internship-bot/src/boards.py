@@ -209,16 +209,162 @@ def _greenhouse(tokens: list) -> list:
     return out
 
 
+def _lever(companies: list) -> list:
+    out = []
+    for c in companies:
+        try:
+            r = requests.get(f"https://api.lever.co/v0/postings/{c}",
+                             params={"mode": "json"}, headers=UA, timeout=TIMEOUT)
+            r.raise_for_status()
+            data = r.json()
+        except (requests.RequestException, ValueError) as e:
+            print(f"[lever:{c}] failed: {e}")
+            continue
+        for j in (data or []):
+            cats = j.get("categories", {}) or {}
+            title = j.get("text", "")
+            if not domain_relevant(title, cats.get("team"), cats.get("department")):
+                continue
+            out.append({
+                "title": _text(title), "org": c,
+                "location": _text(cats.get("location")),
+                "type": _text(cats.get("commitment")),
+                "link": _text(j.get("hostedUrl")),
+                "deadline": "", "why_fit": "", "source": f"lever:{c}",
+            })
+    if companies:
+        print(f"[lever] {len(out)} on-topic openings")
+    return out
+
+
+def _ashby(orgs: list) -> list:
+    out = []
+    for org in orgs:
+        try:
+            r = requests.get(f"https://api.ashbyhq.com/posting-api/job-board/{org}",
+                             headers=UA, timeout=TIMEOUT)
+            r.raise_for_status()
+            data = r.json().get("jobs", [])
+        except (requests.RequestException, ValueError) as e:
+            print(f"[ashby:{org}] failed: {e}")
+            continue
+        for j in data:
+            title = j.get("title", "")
+            if not domain_relevant(title, j.get("department"), j.get("team")):
+                continue
+            out.append({
+                "title": _text(title), "org": org,
+                "location": _text(j.get("location")),
+                "type": _text(j.get("employmentType")),
+                "link": _text(j.get("jobUrl") or j.get("applyUrl")),
+                "deadline": "", "why_fit": "", "source": f"ashby:{org}",
+            })
+    if orgs:
+        print(f"[ashby] {len(out)} on-topic openings")
+    return out
+
+
+def _unstop(types: list, searches: list) -> list:
+    """Unstop (Indian internships/jobs/competitions) via its unofficial public
+    search endpoint. Best-effort: undocumented, so it's fully isolated."""
+    out, seen = [], set()
+    headers = {**UA, "Accept": "application/json"}
+    for t in types:
+        for q in (searches or [""]):
+            try:
+                r = requests.get(
+                    "https://unstop.com/api/public/opportunity/search-result",
+                    params={"opportunity": t, "per_page": 15, "oppstatus": "open",
+                            "searchTerm": q},
+                    headers=headers, timeout=TIMEOUT,
+                )
+                r.raise_for_status()
+                payload = r.json()
+            except (requests.RequestException, ValueError) as e:
+                print(f"[unstop:{t}:{q}] failed: {e}")
+                continue
+            node = payload.get("data", payload)
+            listings = node.get("data") if isinstance(node, dict) else node
+            if not isinstance(listings, list):
+                continue
+            for j in listings:
+                title = j.get("title", "")
+                if not domain_relevant(title):
+                    continue
+                url = j.get("public_url") or j.get("seo_url") or j.get("url") or ""
+                if url and not url.startswith("http"):
+                    url = "https://unstop.com/" + url.lstrip("/")
+                org = (j.get("organisation") or {}).get("name") or j.get("organisation_name") or ""
+                key = (title, org)
+                if not url.startswith("http") or key in seen:
+                    continue
+                seen.add(key)
+                out.append({
+                    "title": _text(title), "org": _text(org),
+                    "location": "India", "type": _text(t),
+                    "link": _text(url), "deadline": "", "why_fit": "", "source": "unstop",
+                })
+    print(f"[unstop] {len(out)} on-topic openings")
+    return out
+
+
+def _workday(boards: list, searches: list) -> list:
+    """Query big-company Workday career sites via their per-tenant CXS JSON.
+    Each board is {host, tenant, site} from a company's careers URL, e.g.
+    https://<tenant>.wd5.myworkdayjobs.com/en-US/<site> -> host=<tenant>.wd5....,
+    tenant=<tenant>, site=<site>."""
+    out, seen = [], set()
+    headers = {**UA, "Content-Type": "application/json", "Accept": "application/json"}
+    for b in boards:
+        host, tenant, site = b.get("host"), b.get("tenant"), b.get("site")
+        if not (host and tenant and site):
+            continue
+        for q in (searches or [""]):
+            try:
+                r = requests.post(
+                    f"https://{host}/wday/cxs/{tenant}/{site}/jobs",
+                    json={"appliedFacets": {}, "limit": 20, "offset": 0, "searchText": q},
+                    headers=headers, timeout=TIMEOUT,
+                )
+                r.raise_for_status()
+                postings = r.json().get("jobPostings", [])
+            except (requests.RequestException, ValueError) as e:
+                print(f"[workday:{tenant}:{q}] failed: {e}")
+                continue
+            for j in postings:
+                title = j.get("title", "")
+                ext = j.get("externalPath", "")
+                if not title or not ext or not domain_relevant(title):
+                    continue
+                if ext in seen:
+                    continue
+                seen.add(ext)
+                out.append({
+                    "title": _text(title), "org": tenant,
+                    "location": _text(j.get("locationsText")),
+                    "type": "", "link": f"https://{host}/en-US/{site}{ext}",
+                    "deadline": "", "why_fit": "", "source": f"workday:{tenant}",
+                })
+    if boards:
+        print(f"[workday] {len(out)} on-topic openings")
+    return out
+
+
 def fetch(profile: dict, settings) -> list:
     s = profile.get("sources", {}) or {}
+    terms = s.get("adzuna_searches", [])
     # Each source is isolated: a failure in one never aborts the whole digest.
     providers = [
-        lambda: _adzuna(s.get("adzuna_country", "in"), s.get("adzuna_searches", []),
+        lambda: _adzuna(s.get("adzuna_country", "in"), terms,
                         settings.adzuna_app_id, settings.adzuna_app_key),
         lambda: _remotive(s.get("remotive_searches", [])),
         lambda: _the_muse(s.get("the_muse_categories", []), s.get("the_muse_location", "")),
         lambda: _jobicy(s.get("jobicy_tags", [])),
         lambda: _greenhouse(s.get("greenhouse_companies", [])),
+        lambda: _lever(s.get("lever_companies", [])),
+        lambda: _ashby(s.get("ashby_orgs", [])),
+        lambda: _unstop(s.get("unstop_types", []), terms),
+        lambda: _workday(s.get("workday_boards", []), terms),
     ]
     jobs = []
     for provider in providers:

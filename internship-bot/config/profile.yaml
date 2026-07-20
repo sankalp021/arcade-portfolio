@@ -77,9 +77,27 @@ sources:
   jobicy_tags:
     - finance
     - data-science
-  # Optional: public Greenhouse job boards of employers you care about.
-  # Add the board "token" from a company's careers URL (boards.greenhouse.io/<token>).
-  greenhouse_companies: []
+  # --- Per-company career pages (clean public APIs; no keys needed) ---
+  # These are HIGH-signal but per-company: fill them with HER target employers.
+  # Any token that doesn't resolve just logs and is skipped (sources are isolated).
+
+  # Greenhouse: token from a careers URL like boards.greenhouse.io/<token>
+  greenhouse_companies:
+    - watershed        # examples to verify/replace with her targets
+    - persefoni
+    - sylvera
+  # Lever: token from jobs.lever.co/<token>
+  lever_companies: []
+  # Ashby: org from jobs.ashbyhq.com/<org>
+  ashby_orgs: []
+  # Unstop (Indian internships/jobs/competitions) — no tokens; uses search terms above.
+  unstop_types:
+    - jobs
+    - internships
+  # Workday (big enterprises). From a careers URL like
+  # https://<tenant>.wd5.myworkdayjobs.com/en-US/<site>  ->
+  #   { host: "<tenant>.wd5.myworkdayjobs.com", tenant: "<tenant>", site: "<site>" }
+  workday_boards: []
 
 # --- Reddit (public JSON API, no key) ---
 reddit:
