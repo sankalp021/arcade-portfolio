@@ -24,8 +24,15 @@ DOMAIN_TERMS = (
 )
 
 
-def domain_relevant(*texts: str) -> bool:
-    blob = " ".join(t or "" for t in texts).lower()
+def domain_relevant(*texts) -> bool:
+    # Robust to non-string values (some APIs return lists, e.g. Jobicy jobIndustry).
+    parts = []
+    for t in texts:
+        if isinstance(t, (list, tuple)):
+            parts.append(" ".join(str(x) for x in t))
+        elif t:
+            parts.append(str(t))
+    blob = " ".join(parts).lower()
     return any(term in blob for term in DOMAIN_TERMS)
 
 
@@ -195,11 +202,19 @@ def _greenhouse(tokens: list) -> list:
 
 def fetch(profile: dict, settings) -> list:
     s = profile.get("sources", {}) or {}
+    # Each source is isolated: a failure in one never aborts the whole digest.
+    providers = [
+        lambda: _adzuna(s.get("adzuna_country", "in"), s.get("adzuna_searches", []),
+                        settings.adzuna_app_id, settings.adzuna_app_key),
+        lambda: _remotive(s.get("remotive_searches", [])),
+        lambda: _the_muse(s.get("the_muse_categories", []), s.get("the_muse_location", "")),
+        lambda: _jobicy(s.get("jobicy_tags", [])),
+        lambda: _greenhouse(s.get("greenhouse_companies", [])),
+    ]
     jobs = []
-    jobs += _adzuna(s.get("adzuna_country", "in"), s.get("adzuna_searches", []),
-                    settings.adzuna_app_id, settings.adzuna_app_key)
-    jobs += _remotive(s.get("remotive_searches", []))
-    jobs += _the_muse(s.get("the_muse_categories", []), s.get("the_muse_location", ""))
-    jobs += _jobicy(s.get("jobicy_tags", []))
-    jobs += _greenhouse(s.get("greenhouse_companies", []))
+    for provider in providers:
+        try:
+            jobs += provider()
+        except Exception as e:  # noqa: BLE001 - never let one source crash the run
+            print(f"[boards] source error: {e}")
     return [j for j in jobs if j.get("link", "").startswith("http")]
