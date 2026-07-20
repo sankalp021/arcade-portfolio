@@ -27,6 +27,8 @@ class Settings:
         # CI IPs). Free "script" app at reddit.com/prefs/apps.
         self.reddit_client_id = os.environ.get("REDDIT_CLIENT_ID", "").strip()
         self.reddit_client_secret = os.environ.get("REDDIT_CLIENT_SECRET", "").strip()
+        # Tavily: LLM-grade web search (real current listings + links). Free tier.
+        self.tavily_api_key = os.environ.get("TAVILY_API_KEY", "").strip()
         self.max_items = int(os.environ.get("MAX_ITEMS", "10") or "10")
         self.dry_run = _flag("DRY_RUN", False)
         self.send_when_empty = _flag("SEND_WHEN_EMPTY", False)

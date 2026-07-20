@@ -97,6 +97,19 @@ sources:
   #   { host: "<tenant>.wd5.myworkdayjobs.com", tenant: "<tenant>", site: "<site>" }
   workday_boards: []
 
+# --- Tavily web search (LLM-grade search API; free tier) ---
+# The "grounding-style" source: real current listings from across the web
+# (Internshala / LinkedIn / Naukri / company pages) with real links.
+tavily:
+  max_results: 8
+  include_domains: []          # empty = whole web; or restrict to job sites
+  queries:
+    - ESG analyst internship India 2026
+    - sustainability internship India apply
+    - finance internship MBA India 2026
+    - BRSR ESG reporting analyst fresher India
+    - sustainable finance internship India
+
 # --- Reddit (public JSON API, no key) ---
 reddit:
   subreddits:

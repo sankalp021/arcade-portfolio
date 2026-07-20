@@ -13,6 +13,7 @@ import formatter  # noqa: E402
 import gemini_source  # noqa: E402
 import networking  # noqa: E402
 import reddit_source  # noqa: E402
+import tavily_source  # noqa: E402
 import telegram_client  # noqa: E402
 from config import Settings, load_profile  # noqa: E402
 
@@ -32,6 +33,10 @@ def gather_jobs(settings: Settings, profile: dict) -> list:
     jobs = []
     jobs += gemini_source.fetch(settings, profile, n=max(settings.max_items + 4, 12))
     jobs += boards.fetch(profile, settings)
+    try:
+        jobs += tavily_source.fetch(settings, profile)
+    except Exception as e:  # noqa: BLE001 - isolated, never fatal
+        print(f"[tavily] fetch error: {e}")
     return _dedupe_batch(jobs)
 
 

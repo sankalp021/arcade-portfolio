@@ -74,6 +74,7 @@ repository secret**. Add exactly these three (names must match):
 | Secret | Unlocks | Get it free at |
 | --- | --- | --- |
 | `ADZUNA_APP_ID` + `ADZUNA_APP_KEY` | real **India** job coverage | [developer.adzuna.com](https://developer.adzuna.com) |
+| `TAVILY_API_KEY` | **web-search** listings (grounding-style: Internshala/LinkedIn/Naukri/company pages via search) | [tavily.com](https://tavily.com) |
 | `REDDIT_CLIENT_ID` + `REDDIT_CLIENT_SECRET` | the **Reddit** section (blocked from CI without it) | [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) → create a **script** app |
 
 Any left blank → that source is simply skipped. LinkedIn needs no keys.
