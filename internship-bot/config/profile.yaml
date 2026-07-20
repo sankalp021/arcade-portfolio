@@ -54,7 +54,8 @@ notes:
 # --- Digest assembly ---
 digest:
   per_source_min: 3    # always include at least the top 3 from each source (never skipped)
-  max_items: 30        # generous overall cap; the top-3-per-source guarantee always holds
+  per_source_max: 6    # ...but never more than this from any one source (no flooding)
+  max_items: 30        # generous overall cap
 
 # --- Job-board sources (real APIs, no fragile scraping) ---
 sources:

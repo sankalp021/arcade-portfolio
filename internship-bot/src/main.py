@@ -46,10 +46,10 @@ def gather_jobs(settings: Settings, profile: dict) -> list:
     return _dedupe_batch(jobs)
 
 
-def select_jobs(fresh: list, keywords: list, per_source: int, cap: int) -> list:
-    """Guarantee each source's top `per_source` (by fit), then fill up to `cap`
-    with the best remaining. The per-source guarantee always holds, so no source
-    gets shut out — even if that pushes the total slightly past `cap`."""
+def select_jobs(fresh: list, keywords: list, per_min: int, per_max: int, cap: int) -> list:
+    """Balanced selection: guarantee each source's top `per_min` (by fit), then
+    fill up to `cap` with the best remaining — but never more than `per_max` from
+    any single source, so no one source floods the digest."""
     fit = lambda j: formatter.score(j, keywords)  # noqa: E731
     ranked = sorted(fresh, key=fit, reverse=True)
 
@@ -57,17 +57,21 @@ def select_jobs(fresh: list, keywords: list, per_source: int, cap: int) -> list:
     for j in ranked:
         by_src[_base_source(j)].append(j)
 
-    picks, used = [], set()
-    for items in by_src.values():
-        for j in items[:per_source]:
+    picks, used, count = [], set(), defaultdict(int)
+    for src, items in by_src.items():
+        for j in items[:per_min]:
             picks.append(j)
             used.add(j["_key"])
+            count[src] += 1
     for j in ranked:
         if len(picks) >= cap:
             break
-        if j["_key"] not in used:
-            picks.append(j)
-            used.add(j["_key"])
+        src, k = _base_source(j), j["_key"]
+        if k in used or count[src] >= per_max:
+            continue
+        picks.append(j)
+        used.add(k)
+        count[src] += 1
 
     picks.sort(key=fit, reverse=True)
     return picks
@@ -79,7 +83,8 @@ def main() -> int:
     name = profile.get("person", {}).get("name", "there")
     keywords = profile.get("keywords", [])
     dcfg = profile.get("digest", {}) or {}
-    per_source = dcfg.get("per_source_min", 3)
+    per_min = dcfg.get("per_source_min", 3)
+    per_max = dcfg.get("per_source_max", 6)
     cap = dcfg.get("max_items", settings.max_items)
 
     seen = dedupe.load_seen()
@@ -102,7 +107,7 @@ def main() -> int:
 
     net = networking.build(profile)
 
-    picks = select_jobs(fresh, keywords, per_source, cap)
+    picks = select_jobs(fresh, keywords, per_min, per_max, cap)
     reddit_picks = reddit_posts[: profile.get("reddit", {}).get("max_items", 5)]
     print(f"[main] {len(picks)} jobs + {len(reddit_picks)} reddit posts to send")
 

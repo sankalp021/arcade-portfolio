@@ -7,6 +7,7 @@ which is exactly what Gemini grounding was meant to do (minus the 429 quota).
 
 Isolated and best-effort: any query failure just logs and is skipped.
 """
+import re
 import urllib.parse
 
 import requests
@@ -18,13 +19,40 @@ TIMEOUT = 30
 API = "https://api.tavily.com/search"
 
 
+# Subdomain prefixes to strip so "in.linkedin.com" -> LinkedIn, not "In".
+_SUBDOMAINS = {"www", "in", "fr", "uk", "us", "en", "eu", "jobs", "careers", "apply", "m"}
+_PRETTY = {
+    "linkedin": "LinkedIn", "glassdoor": "Glassdoor", "naukri": "Naukri", "indeed": "Indeed",
+    "foundit": "Foundit", "internshala": "Internshala", "impactpool": "Impactpool",
+    "climatechangecareers": "Climate Change Careers", "terra": "Terra.do",
+}
+
+# Aggregator / search-index pages ("24 ESG intern jobs", "82 BRSR Job Vacancies").
+_INDEX_RE = re.compile(r"\b\d[\d,]*\s+[\w &.,/'+-]*?\b(jobs?|vacanc|internships?|openings?|positions?)\b", re.I)
+_INDEX_WORDS = ("jobs, employment", "job vacancies", "latest vacancies", "jobs available", "browse jobs")
+_INDEX_URL = ("srch_", "/q-", "-jobs.html", "-jobs-in-", "/jobs-in-", "/brsr-jobs")
+
+
 def _org_from_url(url: str) -> str:
     try:
-        net = urllib.parse.urlparse(url).netloc.lower().replace("www.", "")
-        name = net.split(".")[0] if net else ""
-        return name.capitalize() if name else net
+        net = urllib.parse.urlparse(url).netloc.lower()
     except ValueError:
         return ""
+    labels = [x for x in net.split(".") if x]
+    while labels and labels[0] in _SUBDOMAINS:
+        labels.pop(0)
+    name = labels[0] if labels else net
+    return _PRETTY.get(name, name.capitalize())
+
+
+def _looks_like_index(title: str, url: str) -> bool:
+    """True for search-result / listing-index pages rather than a single opening."""
+    t = (title or "").lower()
+    if _INDEX_RE.search(title or ""):
+        return True
+    if any(w in t for w in _INDEX_WORDS):
+        return True
+    return any(m in (url or "").lower() for m in _INDEX_URL)
 
 
 def _subreddit(url: str) -> str:
@@ -109,6 +137,8 @@ def fetch(settings, profile: dict, max_queries: int = None) -> list:
                 continue
             if not boards.domain_relevant(title, content):
                 continue
+            if _looks_like_index(title, url) or "closed" in content.lower():
+                continue  # skip search-index pages and expired postings
             seen.add(url)
             snippet = content[:160] + ("…" if len(content) > 160 else "")
             out.append({
