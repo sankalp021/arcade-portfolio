@@ -51,6 +51,11 @@ notes:
   - "B.Com Finance background makes her a credible fit for finance and sustainable-finance roles, not only pure sustainability."
   - "Prefers India-based or remote roles."
 
+# --- Digest assembly ---
+digest:
+  per_source_min: 3    # always include at least the top 3 from each source (never skipped)
+  max_items: 30        # generous overall cap; the top-3-per-source guarantee always holds
+
 # --- Job-board sources (real APIs, no fragile scraping) ---
 sources:
   # Remotive: free public JSON API. One request per search term.
@@ -101,10 +106,9 @@ sources:
 # The "grounding-style" source: real current listings from across the web
 # (Internshala / LinkedIn / Naukri / company pages) with real links.
 tavily:
-  # Credit-thrifty: Tavily only runs when the free sources come up short, and is
-  # capped per run (each query = 1 credit; free tier = 1000/month).
-  only_if_fewer_than: 8        # skip Tavily entirely if free sources already gave >= this many new
-  max_queries_per_run: 3       # hard cap on searches per run
+  # Runs daily. Each query = 1 credit; free tier = 1000/month.
+  # 5 job queries + 1 reddit query ≈ 180 credits/month.
+  max_queries_per_run: 5       # job-search queries per run
   max_results: 6
   include_domains: []          # empty = whole web; or restrict to job sites
   queries:
@@ -113,6 +117,9 @@ tavily:
     - finance internship MBA India 2026
     - BRSR ESG reporting analyst fresher India
     - sustainable finance internship India
+  # A focused Reddit search via Tavily (Reddit blocks CI IPs). ~1 credit.
+  reddit_queries:
+    - (ESG OR sustainability OR finance) internship OR hiring India
 
 # --- Reddit (public JSON API, no key) ---
 reddit:

@@ -27,6 +27,60 @@ def _org_from_url(url: str) -> str:
         return ""
 
 
+def _subreddit(url: str) -> str:
+    try:
+        parts = urllib.parse.urlparse(url).path.strip("/").split("/")
+        if len(parts) >= 2 and parts[0] == "r":
+            return f"r/{parts[1]}"
+    except ValueError:
+        pass
+    return "reddit"
+
+
+def _search(key: str, query: str, max_results: int, include: list) -> list:
+    body = {
+        "api_key": key, "query": query, "search_depth": "basic",
+        "max_results": max_results, "include_answer": False,
+    }
+    if include:
+        body["include_domains"] = include
+    r = requests.post(API, json=body, headers=UA, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json().get("results", [])
+
+
+def fetch_reddit(settings, profile: dict) -> list:
+    """A focused Reddit search via Tavily (Reddit blocks anon CI requests).
+    ~1 credit per configured query. Returns items shaped like Reddit posts."""
+    key = settings.tavily_api_key
+    cfg = profile.get("tavily", {}) or {}
+    queries = cfg.get("reddit_queries", [])
+    if not key or not queries:
+        return []
+    out, seen = [], set()
+    for q in queries:
+        try:
+            results = _search(key, q, cfg.get("max_results", 6), ["reddit.com"])
+        except (requests.RequestException, ValueError) as e:
+            print(f"[tavily-reddit:{q[:30]}] failed: {e}")
+            continue
+        for res in results:
+            title = (res.get("title") or "").strip()
+            url = (res.get("url") or "").strip()
+            if not title or not url.startswith("http") or url in seen:
+                continue
+            if not boards.domain_relevant(title, res.get("content", "")):
+                continue
+            seen.add(url)
+            out.append({
+                "title": title, "org": _subreddit(url), "location": "",
+                "type": "reddit", "link": url, "deadline": "", "why_fit": "",
+                "posted": "", "source": "reddit",
+            })
+    print(f"[tavily-reddit] {len(out)} posts")
+    return out
+
+
 def fetch(settings, profile: dict, max_queries: int = None) -> list:
     key = settings.tavily_api_key
     if not key:
@@ -42,16 +96,8 @@ def fetch(settings, profile: dict, max_queries: int = None) -> list:
 
     out, seen = [], set()
     for q in queries:
-        body = {
-            "api_key": key, "query": q, "search_depth": "basic",
-            "max_results": max_results, "include_answer": False,
-        }
-        if include:
-            body["include_domains"] = include
         try:
-            r = requests.post(API, json=body, headers=UA, timeout=TIMEOUT)
-            r.raise_for_status()
-            results = r.json().get("results", [])
+            results = _search(key, q, max_results, include)
         except (requests.RequestException, ValueError) as e:
             print(f"[tavily:{q[:30]}] failed: {e}")
             continue

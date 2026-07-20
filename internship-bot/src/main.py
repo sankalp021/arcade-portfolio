@@ -1,8 +1,9 @@
-"""Orchestrator: gather -> dedupe -> (thrifty Tavily top-up) -> rank -> send -> record.
+"""Orchestrator: gather -> dedupe -> rank (top-N per source) -> send -> record.
 
 Run from the project root:  python src/main.py
 """
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -29,22 +30,47 @@ def _dedupe_batch(items: list) -> list:
     return unique
 
 
-def gather_free_jobs(settings: Settings, profile: dict) -> list:
-    """Free/unmetered sources: Gemini grounding (if quota) + job-board APIs."""
+def _base_source(job: dict) -> str:
+    return (job.get("source", "") or "").split(":")[0]
+
+
+def gather_jobs(settings: Settings, profile: dict) -> list:
+    """All job sources: Gemini grounding (if quota) + boards + Tavily web search."""
     jobs = []
     jobs += gemini_source.fetch(settings, profile, n=max(settings.max_items + 4, 12))
     jobs += boards.fetch(profile, settings)
+    try:
+        jobs += tavily_source.fetch(settings, profile)
+    except Exception as e:  # noqa: BLE001 - isolated, never fatal
+        print(f"[tavily] fetch error: {e}")
     return _dedupe_batch(jobs)
 
 
-def _merge_new(base_fresh: list, extra: list, seen: dict) -> list:
-    """Append genuinely-new, non-duplicate items from `extra` onto base_fresh."""
-    have = {j.get("_key") for j in base_fresh}
-    for j in dedupe.filter_new(_dedupe_batch(extra), seen):
-        if j["_key"] not in have:
-            base_fresh.append(j)
-            have.add(j["_key"])
-    return base_fresh
+def select_jobs(fresh: list, keywords: list, per_source: int, cap: int) -> list:
+    """Guarantee each source's top `per_source` (by fit), then fill up to `cap`
+    with the best remaining. The per-source guarantee always holds, so no source
+    gets shut out — even if that pushes the total slightly past `cap`."""
+    fit = lambda j: formatter.score(j, keywords)  # noqa: E731
+    ranked = sorted(fresh, key=fit, reverse=True)
+
+    by_src = defaultdict(list)
+    for j in ranked:
+        by_src[_base_source(j)].append(j)
+
+    picks, used = [], set()
+    for items in by_src.values():
+        for j in items[:per_source]:
+            picks.append(j)
+            used.add(j["_key"])
+    for j in ranked:
+        if len(picks) >= cap:
+            break
+        if j["_key"] not in used:
+            picks.append(j)
+            used.add(j["_key"])
+
+    picks.sort(key=fit, reverse=True)
+    return picks
 
 
 def main() -> int:
@@ -52,37 +78,31 @@ def main() -> int:
     profile = load_profile()
     name = profile.get("person", {}).get("name", "there")
     keywords = profile.get("keywords", [])
+    dcfg = profile.get("digest", {}) or {}
+    per_source = dcfg.get("per_source_min", 3)
+    cap = dcfg.get("max_items", settings.max_items)
 
     seen = dedupe.load_seen()
 
-    # 1) Free sources first.
-    free_jobs = gather_free_jobs(settings, profile)
-    fresh = dedupe.filter_new(free_jobs, seen)
-    print(f"[main] {len(free_jobs)} free-source jobs, {len(fresh)} new")
+    all_jobs = gather_jobs(settings, profile)
+    fresh = dedupe.filter_new(all_jobs, seen)
+    print(f"[main] {len(all_jobs)} jobs gathered, {len(fresh)} new")
 
-    # 2) Tavily top-up ONLY if the free sources came up short (credit-thrifty).
-    tcfg = profile.get("tavily", {}) or {}
-    threshold = tcfg.get("only_if_fewer_than", settings.max_items)
-    if len(fresh) < threshold:
-        print(f"[main] only {len(fresh)} new (< {threshold}) — topping up with Tavily")
-        try:
-            fresh = _merge_new(fresh, tavily_source.fetch(settings, profile), seen)
-        except Exception as e:  # noqa: BLE001 - isolated, never fatal
-            print(f"[tavily] fetch error: {e}")
-    else:
-        print(f"[main] {len(fresh)} new from free sources (>= {threshold}) — skipping Tavily (0 credits)")
-
-    # 3) Reddit (separate section).
+    # Reddit section (Tavily-powered search + any OAuth results), separate list.
+    reddit_raw = []
     try:
-        reddit_posts = dedupe.filter_new(_dedupe_batch(reddit_source.fetch(profile, settings)), seen)
+        reddit_raw += reddit_source.fetch(profile, settings)
     except Exception as e:  # noqa: BLE001
         print(f"[reddit] fetch error: {e}")
-        reddit_posts = []
+    try:
+        reddit_raw += tavily_source.fetch_reddit(settings, profile)
+    except Exception as e:  # noqa: BLE001
+        print(f"[tavily-reddit] fetch error: {e}")
+    reddit_posts = dedupe.filter_new(_dedupe_batch(reddit_raw), seen)
 
     net = networking.build(profile)
 
-    fresh.sort(key=lambda j: formatter.score(j, keywords), reverse=True)
-    picks = fresh[: settings.max_items]
+    picks = select_jobs(fresh, keywords, per_source, cap)
     reddit_picks = reddit_posts[: profile.get("reddit", {}).get("max_items", 5)]
     print(f"[main] {len(picks)} jobs + {len(reddit_picks)} reddit posts to send")
 
