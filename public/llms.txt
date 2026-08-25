@@ -6,16 +6,24 @@
 > underneath is a normal engineering portfolio.
 
 Sankalp Chaturvedi is a Software Developer at Photonmatters (Aug 2025 –
-present), where he builds reporting systems on Elasticsearch and Kibana,
-scalable Python/FastAPI backends, and backend components for agentic AI
-workflows — including a bank statement analyzer that turns unstructured
-financial documents into structured, decision-ready output. Previously:
-Fullstack Developer Intern at Dozti (React, Node/Express, Docker) and ERP
-Developer Intern at Knighthood (ERPNext/Frappe).
+present), working on lending infrastructure: he built the Python analytics
+service behind a bank statement analyzer for loan underwriting (OCR-extracted
+statements parsed, classified, and scored, with a human validation gate), cut
+LLM cost with a persisted merchant dictionary, built an async campaign
+messaging pipeline that has delivered 221K messages in a single run under
+DND/quiet-hour/cap rules, is designing a multi-agent voice collections system
+(FastAPI, LangGraph, Twilio/LiveKit) with a compliance guard on every branch,
+and owns the month-end close for a mobile-lending portfolio — Python/FastAPI
+and Elasticsearch pipelines over 10M+ loan events, including automated
+TransUnion CRB regulatory submissions. Reconciliation variance holds within
+±1.2% of bank movement. Previously: Fullstack Developer Intern at Dozti
+(React, Node/Express, Docker) and ERP Developer Intern at Knighthood
+(ERPNext/Frappe).
 
-Skills: Python, JavaScript, SQL, FastAPI, React, Next.js, Node.js,
-Elasticsearch, Kibana, MySQL, MongoDB, Docker, n8n, LLM integrations, RAG,
-vector databases, agentic AI, prompt engineering.
+Skills: Python, JavaScript, SQL; LLM integration, agentic workflows,
+LangGraph, RAG, embeddings, OCR, voice agents, Azure AI Foundry; BM25,
+HNSW/ANN, hybrid retrieval (RRF), vector databases, Elasticsearch; FastAPI,
+Node.js/Express, PostgreSQL, MySQL, MongoDB, Docker, Git; React, Next.js.
 
 Achievements: Smart India Hackathon national top-5 grand finalist (2023),
 MetaByte Hackathon global rank 2 (2023), Flipkart GRiD 5.0 top 10% of
