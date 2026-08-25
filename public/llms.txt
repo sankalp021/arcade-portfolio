@@ -39,6 +39,12 @@ MetaByte Hackathon global rank 2 (2023), Flipkart GRiD 5.0 top 10% of
 
 ## Projects
 
+- [Mini Search — hybrid retrieval engine](https://github.com/sankalp021/mini-search):
+  search engine written from scratch in Python (core imports only numpy):
+  hand-rolled BM25 inverted index, HNSW graph, reciprocal rank fusion, and
+  CRC32C-checksummed on-disk segments; recall verified against FAISS across
+  328 tests. Headline finding: on BEIR NFCorpus, exact brute force is ~11×
+  faster than the HNSW graph at statistically identical quality.
 - [AI Travel Itinerary Generator](https://github.com/sankalp021/travel-app):
   Next.js + Gemini API travel planner generating day-wise itineraries with
   budgets, stays, and a trip-context chatbot. Live at
