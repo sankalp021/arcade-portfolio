@@ -751,6 +751,36 @@ summary,
   padding: 0;
 }
 
+.prose table {
+  /* block + auto overflow = tables scroll sideways on phones instead of
+     breaking the page */
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 26px 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.prose th,
+.prose td {
+  border: 2px solid var(--bg-3);
+  padding: 8px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.prose th {
+  background: var(--bg-2);
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
 .prose blockquote {
   border-left: var(--px) solid var(--gold);
   margin-left: 0;
