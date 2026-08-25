@@ -26,17 +26,27 @@ const personSchema = {
   ],
   knowsAbout: [
     'Python',
+    'JavaScript',
+    'SQL',
     'FastAPI',
-    'Elasticsearch',
-    'Kibana',
+    'LangGraph',
     'Agentic AI',
-    'RAG',
     'LLM integration',
+    'RAG',
+    'Embeddings',
+    'OCR',
+    'Voice agents',
+    'BM25',
+    'HNSW',
+    'Hybrid retrieval',
     'Vector databases',
+    'Elasticsearch',
+    'PostgreSQL',
+    'MongoDB',
+    'Docker',
     'React',
     'Next.js',
     'Node.js',
-    'Docker',
   ],
 };
 
@@ -119,18 +129,42 @@ const websiteSchema = {
       </div>
       <ul>
         <li>
-          Build and maintain reporting systems on Elasticsearch + Kibana:
-          automated reports, dashboards, and data pipelines for large-scale
-          financial datasets.
+          Built the Python analytics service behind a Bank Statement Analyzer
+          for loan underwriting: OCR-extracted statements are parsed,
+          classified, and scored into debt-exposure and stability signals —
+          with a human validation gate so bad OCR never reaches a credit
+          decision.
         </li>
         <li>
-          Develop scalable Python/FastAPI backends for report generation,
-          dynamic filtering, aggregations, and Elasticsearch-based retrieval.
+          Cut LLM cost and classification drift with a persisted merchant
+          dictionary: known descriptors resolve from a DB lookup, only misses
+          reach the LLM, and every result is written back, so coverage
+          compounds as the dictionary grows.
         </li>
         <li>
-          Built backend components for agentic AI workflows and a Bank
-          Statement Analyzer that turns unstructured financial data into
-          structured, decision-ready output.
+          Built the campaign messaging tool operations runs for loan
+          campaigns — an async dispatch pipeline that has delivered 221K
+          messages in a single run under DND, quiet-hour, and daily-cap
+          rules, reconciled against carrier delivery receipts.
+        </li>
+        <li>
+          Designing a multi-agent voice collections system (FastAPI,
+          LangGraph, Twilio/LiveKit): identity verification gates account
+          context, an intent router dispatches to specialised handlers, and
+          every branch passes a single compliance guard before any response
+          is generated.
+        </li>
+        <li>
+          Own the month-end close for a mobile-lending portfolio across two
+          lender books: Python/FastAPI and Elasticsearch pipelines over 10M+
+          loan events, producing GL postings, aging and wallet reports, KPI
+          dashboards, and automated TransUnion CRB regulatory submissions.
+        </li>
+        <li>
+          Direct technical contact for the client: lead the weekly governance
+          call, trace reconciliation variances to root cause, and turn
+          findings into permanent fixes — variance holds within ±1.2% of
+          bank movement.
         </li>
       </ul>
     </article>
@@ -256,17 +290,6 @@ const websiteSchema = {
 
       <div class="powerup pixel-border">
         <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
-          <rect x="0" y="1" width="8" height="6" fill="#14142f" />
-          <rect x="0" y="1" width="8" height="1" fill="#4dd8ff" />
-          <rect x="1" y="3" width="3" height="1" fill="#ffd23f" />
-          <rect x="1" y="5" width="5" height="1" fill="#45e06f" />
-        </svg>
-        <h3 class="powerup__name">WEB &amp; BACKEND</h3>
-        <p>React · Next.js · Node.js · FastAPI · REST APIs</p>
-      </div>
-
-      <div class="powerup pixel-border">
-        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
           <rect x="1" y="1" width="6" height="6" fill="#ff4d4d" />
           <rect x="2" y="2" width="4" height="4" fill="#14142f" />
           <rect x="3" y="3" width="2" height="2" fill="#ffd23f" />
@@ -275,8 +298,24 @@ const websiteSchema = {
         </svg>
         <h3 class="powerup__name">AI / ML</h3>
         <p>
-          LLM integrations · RAG · vector DBs · agentic AI · prompt
-          engineering · Gemini API · MS AI Foundry
+          LLM integration · agentic workflows · LangGraph · RAG · embeddings
+          · OCR · voice agents · Azure AI Foundry
+        </p>
+      </div>
+
+      <div class="powerup pixel-border">
+        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="2" y="0" width="3" height="1" fill="#ffd23f" />
+          <rect x="1" y="1" width="1" height="3" fill="#ffd23f" />
+          <rect x="5" y="1" width="1" height="3" fill="#ffd23f" />
+          <rect x="2" y="4" width="3" height="1" fill="#ffd23f" />
+          <rect x="5" y="5" width="1" height="1" fill="#ffd23f" />
+          <rect x="6" y="6" width="2" height="2" fill="#ffd23f" />
+        </svg>
+        <h3 class="powerup__name">SEARCH &amp; RETRIEVAL</h3>
+        <p>
+          BM25 · HNSW/ANN · hybrid retrieval (RRF) · vector databases ·
+          Elasticsearch
         </p>
       </div>
 
@@ -286,10 +325,22 @@ const websiteSchema = {
           <rect x="1" y="3" width="6" height="2" fill="#4dd8ff" />
           <rect x="1" y="6" width="6" height="2" fill="#4dd8ff" />
         </svg>
-        <h3 class="powerup__name">DATA &amp; TOOLS</h3>
+        <h3 class="powerup__name">BACKEND &amp; DATA</h3>
         <p>
-          Elasticsearch · Kibana · MySQL · MongoDB · Docker · Git · n8n
+          FastAPI · Node.js/Express · PostgreSQL · MySQL · MongoDB · Docker ·
+          Git
         </p>
+      </div>
+
+      <div class="powerup pixel-border">
+        <svg width="32" height="32" viewBox="0 0 8 8" aria-hidden="true">
+          <rect x="0" y="1" width="8" height="6" fill="#14142f" />
+          <rect x="0" y="1" width="8" height="1" fill="#4dd8ff" />
+          <rect x="1" y="3" width="3" height="1" fill="#ffd23f" />
+          <rect x="1" y="5" width="5" height="1" fill="#45e06f" />
+        </svg>
+        <h3 class="powerup__name">FRONTEND</h3>
+        <p>React · Next.js</p>
       </div>
     </div>
   </section>
